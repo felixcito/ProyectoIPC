@@ -2,89 +2,122 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 
-<VBox maxWidth="350.0" minWidth="350.0" prefHeight="380.0" prefWidth="350.0" spacing="15.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane prefHeight="505.0" prefWidth="606.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox alignment="CENTER_LEFT" style="-fx-background-color: #0685BC;">
+      <ImageView fitHeight="500.0" fitWidth="800.0" opacity="0.34" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER">
+         <image>
+            <Image url="@../resources/pirineos.jpg" />
+         </image>
+      </ImageView>
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="350.0" minHeight="-Infinity" minWidth="350.0" prefHeight="380.0" prefWidth="413.0" spacing="15.0" StackPane.alignment="CENTER">
          <children>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Login Usuario">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="24.0" />
-               </font>
-            </Text>
-         </children>
-         <VBox.margin>
-            <Insets top="10.0" />
-         </VBox.margin>
-         <padding>
-            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
-         </padding>
-      </HBox>
-      <GridPane prefHeight="400.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-            <VBox GridPane.columnSpan="2">
+            <GridPane prefHeight="398.0" prefWidth="350.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="175.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="175.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="5.0" vgrow="SOMETIMES" />
+              </rowConstraints>
                <children>
-                  <Label text="Nickname:" textFill="#025477" />
-                  <TextField fx:id="nickLoginField" maxHeight="26.0" maxWidth="250.0" minHeight="26.0" minWidth="150.0" prefHeight="26.0" prefWidth="350.0" />
-                  <Label fx:id="errorNickLabel" text="Invalid Nickname" textFill="#ca0505" visible="false" />
-               </children>
-               <GridPane.margin>
-                  <Insets left="20.0" />
-               </GridPane.margin>
-            </VBox>
-            <VBox GridPane.columnSpan="2" GridPane.rowIndex="1">
-               <children>
-                  <Label text="Password:" textFill="#025477" />
-                  <PasswordField fx:id="passLoginField" maxHeight="26.0" maxWidth="250.0" minHeight="26.0" minWidth="150.0" prefHeight="26.0" prefWidth="350.0" />
-                  <Label fx:id="errorPassLabel" text="Invalid Password" textFill="#ca0505" visible="false" />
-               </children>
-               <GridPane.margin>
-                  <Insets left="20.0" />
-               </GridPane.margin>
-            </VBox>
-            <VBox alignment="CENTER_RIGHT" GridPane.columnSpan="2" GridPane.rowIndex="2">
-               <children>
-                  <Hyperlink onAction="#irARegistro" text="Registrate" />
-               </children>
-            </VBox>
-            <Separator GridPane.columnSpan="2" GridPane.rowIndex="3" />
-            <HBox alignment="CENTER_RIGHT" spacing="25.0" GridPane.columnSpan="2" GridPane.rowIndex="4">
-               <children>
-                  <Button fx:id="botonLogin" minWidth="80.0" mnemonicParsing="false" onAction="#handleLoginAction" prefWidth="100.0" style="-fx-background-color: #0685BC;" text="Login" textFill="WHITE">
+                  <Text fill="#151313" strokeType="OUTSIDE" strokeWidth="0.0" text="Login" textAlignment="CENTER" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="Poppins Bold" size="36.0" />
                      </font>
-                  </Button>
+                  </Text>
+                  <TextField fx:id="Nickname" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="262.0" promptText="Nickname" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                     <opaqueInsets>
+                        <Insets left="10.0" />
+                     </opaqueInsets>
+                     <font>
+                        <Font name="Poppins Regular" size="12.0" />
+                     </font>
+                  </TextField>
+                  <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="262.0" spacing="5.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                     <children>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/person.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </ImageView>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </HBox>
+                  <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="262.0" promptText="Password" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                  <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="262.0" spacing="5.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                     <children>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/lock.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </ImageView>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="130.0" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                     <children>
+                        <CheckBox mnemonicParsing="false" text="Remember me" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="130.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                     <children>
+                        <Hyperlink alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="24.0" prefWidth="141.0" text="Forgot password?" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="38.0" prefWidth="262.0" text="Login" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                  <HBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="262.0" spacing="5.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="TOP">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <children>
+                        <Label alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" text="Dont have an account?">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <padding>
+                              <Insets top="2.0" />
+                           </padding>
+                        </Label>
+                        <Hyperlink alignment="TOP_LEFT" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" text="Register" />
+                     </children>
+                  </HBox>
                </children>
-               <GridPane.margin>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-               </GridPane.margin>
-            </HBox>
+            </GridPane>
          </children>
-      </GridPane>
+      </VBox>
    </children>
-</VBox>
+</StackPane>
