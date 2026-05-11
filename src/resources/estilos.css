@@ -105,7 +105,7 @@ S17.642,20.762,13.558,20.762z";
 .login-title {
     -fx-text-fill: white;
 
-    -fx-font-size: 48px;
+    -fx-font-size: 36px;
     -fx-font-weight: bold;
     
     -fx-effect: dropshadow(
@@ -180,25 +180,6 @@ S17.642,20.762,13.558,20.762z";
     -fx-background-color: white;
 }
 
-/* ---------- SMALL TEXT ---------- */
-
-.login-text {
-    -fx-fill: white;
-    -fx-font-size: 13px;
-}
-
-/* ---------- LINKS ---------- */
-
-.hyperlink {
-    -fx-text-fill: white;
-    -fx-border-color: transparent;
-    -fx-font-weight: bold;
-}
-
-.hyperlink:hover {
-    -fx-text-fill: #dddddd;
-}
-
 /* ---------- CHECKBOX ---------- */
 
 .check-box {
@@ -206,10 +187,18 @@ S17.642,20.762,13.558,20.762z";
 }
 
 .check-box .box {
-    -fx-background-color: rgba(255,255,255,0.15);
+
+    -fx-background-color: rgba(255,255,255,0.90);
+
     -fx-border-color: rgba(255,255,255,0.30);
+
+    -fx-border-radius: 2;
+    -fx-background-radius: 2;
+
+    -fx-pref-width: 8px;
+    -fx-pref-height: 8px;
 }
 
 .check-box:selected .mark {
-    -fx-background-color: white;
+    -fx-background-color: #5a2ccf;
 }
