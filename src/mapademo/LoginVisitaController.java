@@ -24,9 +24,9 @@ public class LoginVisitaController implements Initializable {
     @FXML
     private GridPane grid;
     @FXML
-    private TextField Nickname;
-    @FXML
     private VBox fondo_login;
+    @FXML
+    private TextField Nickname;
 
     /**
      * Initializes the controller class.

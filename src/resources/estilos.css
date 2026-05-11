@@ -73,7 +73,14 @@ S17.642,20.762,13.558,20.762z";
     -fx-font-family: "Poppins";
 }
 
-/* ---------- LOGIN CARD ---------- */
+/* ---------- TEXT ---------- */
+
+.register-text {
+    -fx-fill: white;
+    -fx-font-size: 13px;
+}
+
+/* ---------- CARD ---------- */
 
 .login-card {
 
@@ -145,6 +152,29 @@ S17.642,20.762,13.558,20.762z";
     -fx-border-color: rgba(255,255,255,0.45);
 }
 
+.register-input {
+    -fx-background-color: rgba(255,255,255,0.10);
+
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+
+    -fx-border-color: rgba(255,255,255,0.18);
+
+    -fx-text-fill: white;
+
+    -fx-prompt-text-fill: rgba(255,255,255,0.70);
+
+    -fx-font-size: 14px;
+    
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-control-inner-background: transparent;
+}
+
+.register-input:focused {
+    -fx-border-color: rgba(255,255,255,0.45);
+}
+
 /* ---------- BUTTON ---------- */
 
 .login-button {
@@ -180,6 +210,58 @@ S17.642,20.762,13.558,20.762z";
     -fx-background-color: white;
 }
 
+.register-button {
+
+    -fx-background-color: linear-gradient(
+        to right,
+        #ffffff,
+        #f1f1f1
+    );
+
+    -fx-background-radius: 30;
+
+    -fx-text-fill: black;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: normal;
+
+    -fx-cursor: hand;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(255,255,255,0.15),
+        12,
+        0.2,
+        0,
+        2
+    );
+}
+
+.register-button:hover {
+    -fx-background-color: white;
+}
+
+.upload-button {
+
+    -fx-background-color: rgba(255,255,255,0.18);
+
+    -fx-border-color: rgba(255,255,255,0.25);
+
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+
+    -fx-text-fill: white;
+
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+
+    -fx-cursor: hand;
+}
+
+.upload-button:hover {
+    -fx-background-color: rgba(255,255,255,0.28);
+}
+
 /* ---------- CHECKBOX ---------- */
 
 .check-box {
@@ -202,3 +284,43 @@ S17.642,20.762,13.558,20.762z";
 .check-box:selected .mark {
     -fx-background-color: #5a2ccf;
 }
+
+/* ---------- DATE PICKER ---------- */
+
+.date-picker {
+
+    -fx-background-color: rgba(255,255,255,0.10);
+
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+
+    -fx-border-color: rgba(255,255,255,0.18);
+
+    -fx-padding: 6 12 6 12;
+    
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+}
+
+.date-picker .text-field {
+
+    -fx-background-color: transparent;
+
+    -fx-text-fill: white;
+
+    -fx-prompt-text-fill: rgba(255,255,255,0.70);
+}
+
+.date-picker .arrow-button {
+
+    -fx-background-color: transparent;
+}
+
+.date-picker .arrow-button .arrow {
+
+    -fx-background-color: white;
+
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
+}
+

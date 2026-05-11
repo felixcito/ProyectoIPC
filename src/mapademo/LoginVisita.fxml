@@ -21,7 +21,7 @@
    <children>
       <ImageView fitHeight="500.0" fitWidth="800.0" pickOnBounds="true" StackPane.alignment="CENTER">
          <image>
-            <Image url="@../resources/valencia_inkmap.png" />
+            <Image url="@../resources/valencia_login.png" />
          </image>
       </ImageView>
       <VBox fx:id="fondo_login" alignment="CENTER" maxHeight="-Infinity" maxWidth="350.0" minHeight="-Infinity" minWidth="350.0" prefHeight="380.0" prefWidth="413.0" spacing="15.0" styleClass="login-card" StackPane.alignment="CENTER">
