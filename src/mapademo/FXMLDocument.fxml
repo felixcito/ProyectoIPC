@@ -18,14 +18,20 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-
-<BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mapademo.FXMLDocumentController">
+<BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mapademo.FXMLDocumentController">
    <center>
       <VBox prefHeight="556.0" prefWidth="853.0" stylesheets="@../resources/estilos.css">
          <children>
             <SplitPane fx:id="splitPane" dividerPositions="0.19699727024567792" VBox.vgrow="ALWAYS">
                <items>
-                  <ListView fx:id="map_listview" onMouseClicked="#listClicked" prefHeight="399.0" prefWidth="87.0" />
+                  <VBox>
+                     <children>
+                        <ListView fx:id="map_listview" onMouseClicked="#listClicked" prefHeight="399.0" prefWidth="87.0" />
+                        <Label fx:id="labelDistancia" text="Distancia:" />
+                        <Label fx:id="labelDuracion" text="Duración:" />
+                        <Label fx:id="labelDesnivel" text="Desnivel:" />
+                     </children>
+                  </VBox>
                   <ScrollPane fx:id="map_scrollpane" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" pannable="true" prefHeight="398.0" prefWidth="358.0" vbarPolicy="ALWAYS">
                      <content>
                         <Pane>
@@ -57,6 +63,7 @@
               </menus>
             </MenuBar>
             <Button mnemonicParsing="false" onAction="#cambiarMapa" text="Cambiar mapa" />
+            <Button mnemonicParsing="false" onAction="#importarGPX" text="Importar GPX" />
             <Region HBox.hgrow="ALWAYS" />
             <Label text="Zoom" />
             <Button mnemonicParsing="false" onAction="#zoomOut" text="-" />

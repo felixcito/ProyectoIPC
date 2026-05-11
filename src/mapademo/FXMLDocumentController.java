@@ -62,10 +62,16 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polyline;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import upv.ipc.sportlib.Activity;
+import upv.ipc.sportlib.MapProjection;
+import upv.ipc.sportlib.MapRegion;
+import upv.ipc.sportlib.SportActivityApp;
+import upv.ipc.sportlib.TrackPoint;
 
 /**
  * Controlador principal de la aplicación de mapa con POIs.
@@ -155,6 +161,12 @@ public class FXMLDocumentController implements Initializable {
     private Label mousePosition;
     @FXML
     private SplitPane splitPane;
+    @FXML
+    private Label labelDistancia;
+    @FXML
+    private Label labelDuracion;
+    @FXML
+    private Label labelDesnivel;
  
 
     // =========================================================
@@ -618,6 +630,72 @@ public class FXMLDocumentController implements Initializable {
         circle.setCenterY(y);
         mapPane.getChildren().add(circle); // Se añade sobre el mapa como cualquier nodo
     }
+
+    @FXML
+private void importarGPX(ActionEvent event) {
+    // 1. Abrimos el buscador de archivos
+    FileChooser fc = new FileChooser();
+    fc.setTitle("Seleccionar archivo GPX");
+    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Ficheros GPX", "*.gpx"));
+    
+    // Obtenemos la ventana actual para mostrar el diálogo
+    File file = fc.showOpenDialog(zoom_slider.getScene().getWindow());
+
+    if (file != null) {
+        try {
+            // 2. Importamos la actividad usando la librería
+            SportActivityApp app = SportActivityApp.getInstance();
+            Activity actividad = app.importActivity(file); // La librería procesa el GPX y lo guarda [cite: 269]
+
+            // 3. Mostramos las estadísticas en los Labels [cite: 201]
+            labelDistancia.setText("Distancia: " + String.format("%.2f", actividad.getTotalDistance() / 1000.0) + " km");
+            labelDuracion.setText("Duración: " + actividad.getDuration().toMinutes() + " min");
+            labelDesnivel.setText("Desnivel+: " + actividad.getElevationGain() + " m");
+
+            // 4. Dibujamos la ruta en el mapa
+            dibujarRuta(actividad);
+
+        } catch (Exception e) {
+            System.out.println("Error al importar: " + e.getMessage());
+        }
+    }
+}
+
+    private void dibujarRuta(Activity activity) {
+    // 1. Obtenemos el mapa sugerido por la librería para esta ruta [cite: 197]
+    MapRegion region = activity.getSuggestedMap();
+    if (region != null) {
+        // Cargamos la imagen del mapa correcto (ej: pirineos.jpg o calderona.jpg)
+        File imgFile = new File(region.getImagePath());
+        buildMap(imgFile); // Usamos el método que ya venía en tu proyecto base
+    }
+    
+    // 2. Creamos el objeto matemático para convertir coordenadas [cite: 142]
+    MapProjection proj = new MapProjection(region, mapPane.getWidth(), mapPane.getHeight());
+
+    // 3. Creamos la línea (Polyline)
+    Polyline route = new Polyline();
+    route.setStroke(Color.BLUE);
+    route.setStrokeWidth(3.0);
+
+    // 4. Recorremos todos los puntos del GPS y los añadimos a la línea [cite: 145-148]
+    for (TrackPoint tp : activity.getTrackPoints()) {
+        Point2D p = proj.project(tp); // Convertimos lat/lon a píxeles X/Y
+        route.getPoints().addAll(p.getX(), p.getY());
+    }
+
+    // 5. Añadimos la línea al mapa
+    mapPane.getChildren().add(route);
+
+    // 6. Añadimos círculo verde al inicio y rojo al final 
+    Point2D pInicio = proj.project(activity.getStartPoint());
+    Circle circleInicio = new Circle(pInicio.getX(), pInicio.getY(), 6, Color.GREEN);
+    
+    Point2D pFin = proj.project(activity.getEndPoint());
+    Circle circleFin = new Circle(pFin.getX(), pFin.getY(), 6, Color.RED);
+
+    mapPane.getChildren().addAll(circleInicio, circleFin);
+}
 
 
 
