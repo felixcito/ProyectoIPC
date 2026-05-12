@@ -652,6 +652,7 @@ public class FXMLDocumentController implements Initializable {
         mapPane.getChildren().add(circle); // Se añade sobre el mapa como cualquier nodo
     }
 
+    @FXML
     private void importarGPX(ActionEvent event) {
         // 1. Abrimos el buscador de archivos
         FileChooser fc = new FileChooser();
@@ -799,6 +800,30 @@ public class FXMLDocumentController implements Initializable {
         } catch (Exception e) {
             System.err.println("Error al cerrar sesión: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+    
+    // =========================================================
+    //  Historial
+    // =========================================================
+    
+    @FXML
+    private void verHistorial(ActionEvent event) {
+        try {
+            // Cargamos el nuevo archivo FXML que has diseñado
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("HistorialSesiones.fxml"));
+            Parent root = loader.load();
+
+            // Creamos una nueva ventana (Stage)
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Session History");
+
+            // Esto hace que el usuario no pueda tocar la ventana principal hasta cerrar esta
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL); 
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Error al cargar la ventana de historial: " + e.getMessage());
         }
     }
 }

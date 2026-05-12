@@ -69,6 +69,7 @@
             </MenuBar>
             <Button mnemonicParsing="false" onAction="#cambiarMapa" text="Cambiar mapa" />
             <Button mnemonicParsing="false" onAction="#importarGPX" text="Importar GPX" />
+            <Button mnemonicParsing="false" onAction="#verHistorial" text="Historial" />
             <Button mnemonicParsing="false" onAction="#cerrarSesion" text="Cerrar Sesion" />
             <Region HBox.hgrow="ALWAYS" />
             <Label text="Zoom" />
