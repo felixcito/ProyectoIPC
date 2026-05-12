@@ -37,9 +37,13 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -119,11 +123,11 @@ public class FXMLDocumentController implements Initializable {
     /** Menú contextual reutilizable para el clic derecho sobre el mapa. */
     private ContextMenu mapContextMenu;
 
-
+    
     /**
      * Indica si el controlador está en modo inserción de POI.
      * {@code true} → el próximo clic izquierdo sobre el mapa abre el diálogo.
-     */
+    */
     private boolean insertionMode = false;
 
     // =========================================================
@@ -632,71 +636,98 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-private void importarGPX(ActionEvent event) {
-    // 1. Abrimos el buscador de archivos
-    FileChooser fc = new FileChooser();
-    fc.setTitle("Seleccionar archivo GPX");
-    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Ficheros GPX", "*.gpx"));
-    
-    // Obtenemos la ventana actual para mostrar el diálogo
-    File file = fc.showOpenDialog(zoom_slider.getScene().getWindow());
+    private void importarGPX(ActionEvent event) {
+        // 1. Abrimos el buscador de archivos
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Seleccionar archivo GPX");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Ficheros GPX", "*.gpx"));
 
-    if (file != null) {
-        try {
-            // 2. Importamos la actividad usando la librería
-            SportActivityApp app = SportActivityApp.getInstance();
-            Activity actividad = app.importActivity(file); // La librería procesa el GPX y lo guarda [cite: 269]
+        // Obtenemos la ventana actual para mostrar el diálogo
+        File file = fc.showOpenDialog(zoom_slider.getScene().getWindow());
 
-            // 3. Mostramos las estadísticas en los Labels [cite: 201]
-            labelDistancia.setText("Distancia: " + String.format("%.2f", actividad.getTotalDistance() / 1000.0) + " km");
-            labelDuracion.setText("Duración: " + actividad.getDuration().toMinutes() + " min");
-            labelDesnivel.setText("Desnivel+: " + actividad.getElevationGain() + " m");
+        if (file != null) {
+            try {
+                // 2. Importamos la actividad usando la librería
+                SportActivityApp app = SportActivityApp.getInstance();
+                Activity actividad = app.importActivity(file); // La librería procesa el GPX y lo guarda [cite: 269]
 
-            // 4. Dibujamos la ruta en el mapa
-            dibujarRuta(actividad);
+                // 3. Mostramos las estadísticas en los Labels [cite: 201]
+                labelDistancia.setText("Distancia: " + String.format("%.2f", actividad.getTotalDistance() / 1000.0) + " km");
+                labelDuracion.setText("Duración: " + actividad.getDuration().toMinutes() + " min");
+                labelDesnivel.setText("Desnivel+: " + actividad.getElevationGain() + " m");
 
-        } catch (Exception e) {
-            System.out.println("Error al importar: " + e.getMessage());
+                // 4. Dibujamos la ruta en el mapa
+                dibujarRuta(actividad);
+
+            } catch (Exception e) {
+                System.out.println("Error al importar: " + e.getMessage());
+            }
         }
     }
-}
 
     private void dibujarRuta(Activity activity) {
-    // 1. Obtenemos el mapa sugerido por la librería para esta ruta [cite: 197]
-    MapRegion region = activity.getSuggestedMap();
-    if (region != null) {
-        // Cargamos la imagen del mapa correcto (ej: pirineos.jpg o calderona.jpg)
-        File imgFile = new File(region.getImagePath());
-        buildMap(imgFile); // Usamos el método que ya venía en tu proyecto base
+        // 1. Obtenemos el mapa sugerido por la librería para esta ruta [cite: 197]
+        MapRegion region = activity.getSuggestedMap();
+        if (region != null) {
+            // Cargamos la imagen del mapa correcto (ej: pirineos.jpg o calderona.jpg)
+            File imgFile = new File(region.getImagePath());
+            buildMap(imgFile); // Usamos el método que ya venía en tu proyecto base
+        }
+
+        // 2. Creamos el objeto matemático para convertir coordenadas [cite: 142]
+        MapProjection proj = new MapProjection(region, mapPane.getWidth(), mapPane.getHeight());
+
+        // 3. Creamos la línea (Polyline)
+        Polyline route = new Polyline();
+        route.setStroke(Color.BLUE);
+        route.setStrokeWidth(3.0);
+
+        // 4. Recorremos todos los puntos del GPS y los añadimos a la línea [cite: 145-148]
+        for (TrackPoint tp : activity.getTrackPoints()) {
+            Point2D p = proj.project(tp); // Convertimos lat/lon a píxeles X/Y
+            route.getPoints().addAll(p.getX(), p.getY());
+        }
+
+        // 5. Añadimos la línea al mapa
+        mapPane.getChildren().add(route);
+
+        // 6. Añadimos círculo verde al inicio y rojo al final 
+        Point2D pInicio = proj.project(activity.getStartPoint());
+        Circle circleInicio = new Circle(pInicio.getX(), pInicio.getY(), 6, Color.GREEN);
+
+        Point2D pFin = proj.project(activity.getEndPoint());
+        Circle circleFin = new Circle(pFin.getX(), pFin.getY(), 6, Color.RED);
+
+        mapPane.getChildren().addAll(circleInicio, circleFin);
     }
     
-    // 2. Creamos el objeto matemático para convertir coordenadas [cite: 142]
-    MapProjection proj = new MapProjection(region, mapPane.getWidth(), mapPane.getHeight());
-
-    // 3. Creamos la línea (Polyline)
-    Polyline route = new Polyline();
-    route.setStroke(Color.BLUE);
-    route.setStrokeWidth(3.0);
-
-    // 4. Recorremos todos los puntos del GPS y los añadimos a la línea [cite: 145-148]
-    for (TrackPoint tp : activity.getTrackPoints()) {
-        Point2D p = proj.project(tp); // Convertimos lat/lon a píxeles X/Y
-        route.getPoints().addAll(p.getX(), p.getY());
-    }
-
-    // 5. Añadimos la línea al mapa
-    mapPane.getChildren().add(route);
-
-    // 6. Añadimos círculo verde al inicio y rojo al final 
-    Point2D pInicio = proj.project(activity.getStartPoint());
-    Circle circleInicio = new Circle(pInicio.getX(), pInicio.getY(), 6, Color.GREEN);
+    // =========================================================
+    //  Cerrar sesion
+    // =========================================================
     
-    Point2D pFin = proj.project(activity.getEndPoint());
-    Circle circleFin = new Circle(pFin.getX(), pFin.getY(), 6, Color.RED);
+    @FXML
+    private void cerrarSesion(ActionEvent event) {
+        try {
+            // 1. Guardar y cerrar sesión en la librería del proyecto
+            upv.ipc.sportlib.SportActivityApp.getInstance().logout();
+            System.out.println("Sesión guardada en la base de datos.");
 
-    mapPane.getChildren().addAll(circleInicio, circleFin);
-}
+            // 2. Preparar el cargador para la vista de Login
+            // Nota: Asegúrate de que el nombre coincide con tu archivo (LoginVisita.fxml) 
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginVisita.fxml"));
+            Parent root = loader.load();
 
+            // 3. Obtener la ventana actual (Stage)
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-
+            // 4. Cambiar la escena y mostrar el Login
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Running la Safor - Login");
+            stage.show();
+        } catch (Exception e) {
+            System.err.println("Error al cerrar sesión: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }
