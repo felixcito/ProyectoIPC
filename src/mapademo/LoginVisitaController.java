@@ -13,6 +13,7 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 
 /**
  * FXML Controller class
@@ -27,13 +28,16 @@ public class LoginVisitaController implements Initializable {
     private VBox fondo_login;
     @FXML
     private TextField Nickname;
+    private Rectangle rectBlur;
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        fondo_login.setEffect(new GaussianBlur(25));
+        fondo_login.setEffect(new GaussianBlur(10));
         // TODO
     }    
     

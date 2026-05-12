@@ -83,20 +83,15 @@ S17.642,20.762,13.558,20.762z";
 /* ---------- CARD ---------- */
 
 .login-card {
-
     -fx-background-color: linear-gradient(
         to bottom right,
-        rgba(255,255,255,0.12),
-        rgba(255,255,255,0.04)
+        rgba(80,80,80,0.55),
+        rgba(80,80,80,0.40)
     );
-
     -fx-background-radius: 20;
     -fx-border-radius: 20;
-
     -fx-border-color: rgba(255,255,255,0.18);
-
     -fx-padding: 35;
-
     -fx-effect: dropshadow(
         gaussian,
         rgba(0,0,0,0.30),
@@ -125,24 +120,35 @@ S17.642,20.762,13.558,20.762z";
     );
 }
 
-/* ---------- INPUTS ---------- */
-
-.login-input {
-    -fx-background-color: rgba(255,255,255,0.10);
-
-    -fx-background-radius: 30;
-    -fx-border-radius: 30;
-
-    -fx-border-color: rgba(255,255,255,0.18);
+.registration-title {
 
     -fx-text-fill: white;
 
+    -fx-font-size: 22px;
+
+    -fx-font-weight: bold;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(255,255,255,0.20),
+        10,
+        0.2,
+        0,
+        0
+    );
+}
+
+/* ---------- INPUTS ---------- */
+
+.login-input {
+    -fx-background-color: rgba(50,50,50,0.70);
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-text-fill: white;
     -fx-prompt-text-fill: rgba(255,255,255,0.70);
-
     -fx-padding: 12 18 12 18;
-
     -fx-font-size: 14px;
-    
     -fx-background-insets: 0;
     -fx-border-insets: 0;
     -fx-control-inner-background: transparent;
@@ -153,21 +159,23 @@ S17.642,20.762,13.558,20.762z";
 }
 
 .register-input {
-    -fx-background-color: rgba(255,255,255,0.10);
+
+    -fx-background-color: rgba(50,50,50,0.72);
 
     -fx-background-radius: 30;
     -fx-border-radius: 30;
 
-    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-color: rgba(255,255,255,0.10);
 
     -fx-text-fill: white;
 
-    -fx-prompt-text-fill: rgba(255,255,255,0.70);
+    -fx-prompt-text-fill: rgba(255,255,255,0.55);
 
     -fx-font-size: 14px;
-    
+
     -fx-background-insets: 0;
     -fx-border-insets: 0;
+
     -fx-control-inner-background: transparent;
 }
 
@@ -178,27 +186,20 @@ S17.642,20.762,13.558,20.762z";
 /* ---------- BUTTON ---------- */
 
 .login-button {
-
     -fx-background-color: linear-gradient(
         to right,
-        #ffffff,
-        #f1f1f1
+        rgba(80,80,80,0.90),
+        rgba(50,50,50,0.90)
     );
-
     -fx-background-radius: 30;
-
-    -fx-text-fill: black;
-
+    -fx-text-fill: white;
     -fx-font-size: 15px;
     -fx-font-weight: normal;
-
     -fx-padding: 12 20 12 20;
-
     -fx-cursor: hand;
-
     -fx-effect: dropshadow(
         gaussian,
-        rgba(255,255,255,0.15),
+        rgba(0,0,0,0.30),
         12,
         0.2,
         0,
@@ -207,30 +208,31 @@ S17.642,20.762,13.558,20.762z";
 }
 
 .login-button:hover {
-    -fx-background-color: white;
+    -fx-background-color: rgba(100,100,100,0.90);
 }
 
 .register-button {
 
     -fx-background-color: linear-gradient(
         to right,
-        #ffffff,
-        #f1f1f1
+        rgba(80,80,80,0.92),
+        rgba(45,45,45,0.92)
     );
 
     -fx-background-radius: 30;
 
-    -fx-text-fill: black;
+    -fx-text-fill: white;
 
-    -fx-font-size: 12px;
+    -fx-font-size: 14px;
+
     -fx-font-weight: normal;
 
     -fx-cursor: hand;
 
     -fx-effect: dropshadow(
         gaussian,
-        rgba(255,255,255,0.15),
-        12,
+        rgba(0,0,0,0.30),
+        10,
         0.2,
         0,
         2
@@ -238,7 +240,8 @@ S17.642,20.762,13.558,20.762z";
 }
 
 .register-button:hover {
-    -fx-background-color: white;
+
+    -fx-background-color: rgba(95,95,95,0.95);
 }
 
 .upload-button {
@@ -264,11 +267,11 @@ S17.642,20.762,13.558,20.762z";
 
 /* ---------- CHECKBOX ---------- */
 
-.check-box {
+.login-checkbox {
     -fx-text-fill: white;
 }
 
-.check-box .box {
+.login-checkbox .box {
 
     -fx-background-color: rgba(255,255,255,0.90);
 
@@ -281,7 +284,7 @@ S17.642,20.762,13.558,20.762z";
     -fx-pref-height: 8px;
 }
 
-.check-box:selected .mark {
+.login-checkbox:selected .mark {
     -fx-background-color: #5a2ccf;
 }
 
@@ -289,15 +292,15 @@ S17.642,20.762,13.558,20.762z";
 
 .date-picker {
 
-    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-background-color: rgba(50,50,50,0.72);
 
     -fx-background-radius: 30;
     -fx-border-radius: 30;
 
-    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-color: rgba(255,255,255,0.10);
 
-    -fx-padding: 6 12 6 12;
-    
+    -fx-padding: 4 12 4 12;
+
     -fx-background-insets: 0;
     -fx-border-insets: 0;
 }
@@ -308,7 +311,7 @@ S17.642,20.762,13.558,20.762z";
 
     -fx-text-fill: white;
 
-    -fx-prompt-text-fill: rgba(255,255,255,0.70);
+    -fx-prompt-text-fill: rgba(255,255,255,0.55);
 }
 
 .date-picker .arrow-button {
@@ -324,3 +327,24 @@ S17.642,20.762,13.558,20.762z";
     -fx-scale-y: 1.2;
 }
 
+/* ---------- CIRCLE ---------- */
+
+.circle-avatar {
+    -fx-fill: grey;
+    -fx-stroke: transparent;
+}
+
+/* ---------- HYPERLINK ---------- */
+
+.hyprland {
+
+    -fx-text-fill: white;
+
+    -fx-font-family: "Poppins";
+
+    -fx-font-size: 12px;
+
+    -fx-font-weight: bold;
+
+    -fx-border-color: transparent;
+}

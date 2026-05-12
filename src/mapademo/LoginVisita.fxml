@@ -42,7 +42,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="login-title" text="Login" textAlignment="CENTER" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="login-title" text="User login" textAlignment="CENTER" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <font>
                         <Font name="Poppins Bold" size="36.0" />
                      </font>
@@ -88,7 +88,7 @@
                   </HBox>
                   <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="130.0" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                      <children>
-                        <CheckBox mnemonicParsing="false" text="Remember me" textAlignment="CENTER" textFill="WHITE" HBox.hgrow="ALWAYS">
+                        <CheckBox mnemonicParsing="false" styleClass="login-checkbox" text="Remember me" textAlignment="CENTER" textFill="WHITE" HBox.hgrow="ALWAYS">
                            <font>
                               <Font name="Poppins Regular" size="12.0" />
                            </font></CheckBox>
@@ -96,7 +96,7 @@
                   </HBox>
                   <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="130.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                      <children>
-                        <Hyperlink alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="24.0" prefWidth="141.0" text="Forgot password?" textFill="WHITE" HBox.hgrow="ALWAYS">
+                        <Hyperlink alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="24.0" prefWidth="141.0" styleClass="hyprland" text="Forgot password?" textFill="WHITE" HBox.hgrow="ALWAYS">
                            <font>
                               <Font name="Poppins Bold" size="12.0" />
                            </font></Hyperlink>
@@ -122,11 +122,14 @@
                               <Font name="Poppins Regular" size="12.0" />
                            </font>
                         </Label>
-                        <Hyperlink alignment="TOP_LEFT" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" text="Register" textFill="WHITE">
+                        <Hyperlink alignment="TOP_LEFT" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" styleClass="hyprland" text="Register" textFill="WHITE">
                            <font>
                               <Font name="Poppins Bold" size="12.0" />
                            </font></Hyperlink>
                      </children>
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding>
                   </HBox>
                </children>
             </GridPane>
