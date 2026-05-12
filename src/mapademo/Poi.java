@@ -1,6 +1,7 @@
 package mapademo;
 import javafx.geometry.Point2D;
 
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -14,6 +15,7 @@ import javafx.geometry.Point2D;
 public class Poi {
     
     private String code;
+   
     
     private Point2D position;
 

@@ -30,6 +30,7 @@ package mapademo;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
@@ -43,6 +44,7 @@ import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -68,6 +70,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import upv.ipc.sportlib.Activity;
+import upv.ipc.sportlib.Annotation;
+import upv.ipc.sportlib.AnnotationType;
+import upv.ipc.sportlib.GeoPoint;
 import upv.ipc.sportlib.MapProjection;
 import upv.ipc.sportlib.MapRegion;
 import upv.ipc.sportlib.SportActivityApp;
@@ -114,6 +119,8 @@ public class FXMLDocumentController implements Initializable {
      * la imagen cargada.
      */
     private Pane mapPane;
+    private Activity actividadActual; // Guarda la ruta que has importado
+    private MapProjection proj;       // Necesaria para convertir píxeles a GPS
 
     
     /** Menú contextual reutilizable para el clic derecho sobre el mapa. */
@@ -167,6 +174,16 @@ public class FXMLDocumentController implements Initializable {
     private Label labelDuracion;
     @FXML
     private Label labelDesnivel;
+    @FXML
+    private Label labelVelocidadMedia;
+    @FXML
+    private Label labelRitmoMedio;
+    @FXML
+    private Label labelAltitudMinima;
+    @FXML
+    private Label labelAltitudMaxima;
+    @FXML
+    private Label labelDesnivelNegativo;
  
 
     // =========================================================
@@ -378,16 +395,16 @@ public class FXMLDocumentController implements Initializable {
      * @param x coordenada X del clic en el sistema local del mapPane
      * @param y coordenada Y del clic en el sistema local del mapPane
      */
-    private void onMapRightClick(double x, double y) {
-        // FIX 6: cerramos el menú si ya estaba visible (evita instancias flotantes)
+   private void onMapRightClick(double x, double y) {
+        // cerramos el menú si ya estaba visible
         mapContextMenu.hide();
 
-        // Actualizamos las acciones de los items con las coordenadas actuales.
-        // Usamos variables final para que el lambda pueda capturarlas.
+        // Actualizamos las acciones con las coordenadas actuales.
         final double clickX = x;
         final double clickY = y;
-        mapContextMenu.getItems().get(0).setOnAction(e -> addPoi(clickX, clickY));
-        mapContextMenu.getItems().get(1).setOnAction(e -> addCircle(clickX, clickY));
+        
+  
+        mapContextMenu.getItems().get(0).setOnAction(e -> crearAnotacionReal(clickX, clickY));
 
         // Mostramos el menú en coordenadas de pantalla
         mapContextMenu.show(
@@ -637,7 +654,7 @@ private void importarGPX(ActionEvent event) {
     FileChooser fc = new FileChooser();
     fc.setTitle("Seleccionar archivo GPX");
     fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Ficheros GPX", "*.gpx"));
-    
+   
     // Obtenemos la ventana actual para mostrar el diálogo
     File file = fc.showOpenDialog(zoom_slider.getScene().getWindow());
 
@@ -645,12 +662,19 @@ private void importarGPX(ActionEvent event) {
         try {
             // 2. Importamos la actividad usando la librería
             SportActivityApp app = SportActivityApp.getInstance();
-            Activity actividad = app.importActivity(file); // La librería procesa el GPX y lo guarda [cite: 269]
+            Activity actividad = app.importActivity(file); // La librería procesa el GPX y lo guarda 
+            this.actividadActual = actividad;
+            this.proj = new MapProjection(actividad.getSuggestedMap(), mapPane.getWidth(), mapPane.getHeight()); 
 
             // 3. Mostramos las estadísticas en los Labels [cite: 201]
             labelDistancia.setText("Distancia: " + String.format("%.2f", actividad.getTotalDistance() / 1000.0) + " km");
             labelDuracion.setText("Duración: " + actividad.getDuration().toMinutes() + " min");
             labelDesnivel.setText("Desnivel+: " + actividad.getElevationGain() + " m");
+            labelVelocidadMedia.setText("Velocidad media: " + String.format("%.2f", actividad.getAverageSpeed()) + " km/h");
+            labelRitmoMedio.setText("Ritmo medio: " + actividad.getAveragePace() + " min/km");
+            labelDesnivelNegativo.setText("Desnivel-: " + actividad.getElevationLoss() + " m");
+            labelAltitudMinima.setText("Altitud mín: " + actividad.getMinElevation() + " m");
+            labelAltitudMaxima.setText("Altitud máx: " + actividad.getMaxElevation() + " m");
 
             // 4. Dibujamos la ruta en el mapa
             dibujarRuta(actividad);
@@ -662,7 +686,7 @@ private void importarGPX(ActionEvent event) {
 }
 
     private void dibujarRuta(Activity activity) {
-    // 1. Obtenemos el mapa sugerido por la librería para esta ruta [cite: 197]
+    // 1. Obtenemos el mapa sugerido por la librería para esta ruta
     MapRegion region = activity.getSuggestedMap();
     if (region != null) {
         // Cargamos la imagen del mapa correcto (ej: pirineos.jpg o calderona.jpg)
@@ -670,7 +694,7 @@ private void importarGPX(ActionEvent event) {
         buildMap(imgFile); // Usamos el método que ya venía en tu proyecto base
     }
     
-    // 2. Creamos el objeto matemático para convertir coordenadas [cite: 142]
+    // 2. Creamos el objeto matemático para convertir coordenadas 
     MapProjection proj = new MapProjection(region, mapPane.getWidth(), mapPane.getHeight());
 
     // 3. Creamos la línea (Polyline)
@@ -695,6 +719,51 @@ private void importarGPX(ActionEvent event) {
     Circle circleFin = new Circle(pFin.getX(), pFin.getY(), 6, Color.RED);
 
     mapPane.getChildren().addAll(circleInicio, circleFin);
+}
+    private void crearAnotacionReal(double x, double y) {
+    if (actividadActual == null) return; // Si no hay ruta cargada, no hacemos nada
+
+    // 1. Creamos el diálogo (ventanita) para pedir datos
+    Dialog<Annotation> dialog = new Dialog<>();
+    dialog.setTitle("Nueva Anotación");
+    dialog.setHeaderText("Añade una nota al mapa");
+
+    // 2. Creamos los controles: un campo de texto y un selector de color
+    TextField textField = new TextField();
+    textField.setPromptText("Escribe aquí tu nota...");
+    ColorPicker colorPicker = new ColorPicker(Color.RED);
+
+    VBox vbox = new VBox(10, new Label("Texto de la anotación:"), textField, new Label("Color:"), colorPicker);
+    dialog.getDialogPane().setContent(vbox);
+    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+    // 3. Cuando el usuario pulsa OK, construimos la anotación real
+    dialog.setResultConverter(button -> {
+        if (button == ButtonType.OK) {
+            GeoPoint gp = proj.unproject(x, y); 
+            
+            // Convertimos el Color de JavaFX a formato Hexadecimal (#RRGGBB) que pide la librería
+            String hexColor = String.format("#%02X%02X%02X",
+                (int)(colorPicker.getValue().getRed() * 255),
+                (int)(colorPicker.getValue().getGreen() * 255),
+                (int)(colorPicker.getValue().getBlue() * 255));
+
+            // Creamos la anotación con los datos del usuario 
+            return new Annotation(AnnotationType.TEXT, textField.getText(), hexColor, 2.0, List.of(gp));
+        }
+        return null;
+    });
+
+    // 4. Mostramos la ventana y si hay resultado lo guardamos y dibujamos
+    Optional<Annotation> result = dialog.showAndWait();
+    result.ifPresent(nota -> {
+        SportActivityApp.getInstance().addAnnotation(actividadActual, nota); 
+        
+        Text t = new Text(x, y, nota.getText());
+        t.setFill(colorPicker.getValue()); // Le ponemos el color que eligió
+        t.setStyle("-fx-font-weight: bold;");
+        mapPane.getChildren().add(t);
+    });
 }
 
 
