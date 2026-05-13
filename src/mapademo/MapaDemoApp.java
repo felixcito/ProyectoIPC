@@ -24,7 +24,7 @@ public class MapaDemoApp extends Application {
 
         // --- TRUCO PARA PRUEBAS: Login automático ---
         // Pon aquí un usuario y contraseña que sepas que ya existen en tu base de datos
-        upv.ipc.sportlib.SportActivityApp.getInstance().login("jgarcia", "passPER21!"); 
+        //upv.ipc.sportlib.SportActivityApp.getInstance().login("jgarcia", "passPER21!"); 
         // --------------------------------------------
 
         // Cambiamos el archivo que se carga al arrancar

@@ -47,6 +47,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
@@ -843,36 +844,108 @@ public class FXMLDocumentController implements Initializable {
             }
 
             // 3. Metemos los datos en la gráfica
-    chartDesnivel.getData().add(series);
+            chartDesnivel.getData().add(series);
 
-    // 4. INTERACCIÓN GRÁFICA -> MAPA
-    // Activamos los símbolos para poder detectarlos con el ratón
-    chartDesnivel.setCreateSymbols(true); 
+            // 4. INTERACCIÓN GRÁFICA -> MAPA
+            // Activamos los símbolos para poder detectarlos con el ratón
+            chartDesnivel.setCreateSymbols(true); 
 
-    for (int i = 0; i < series.getData().size(); i++) {
-        XYChart.Data<Number, Number> data = series.getData().get(i);
-        final TrackPoint tpAsociado = puntos.get(i); // Guardamos qué punto del GPS es
+            for (int i = 0; i < series.getData().size(); i++) {
+                XYChart.Data<Number, Number> data = series.getData().get(i);
+                final TrackPoint tpAsociado = puntos.get(i); // Guardamos qué punto del GPS es
 
-        javafx.scene.Node node = data.getNode();
-        if (node != null) {
-            // Hacemos el punto transparente para que se vea como una línea limpia
-            node.setStyle("-fx-background-color: transparent, transparent;");
+                javafx.scene.Node node = data.getNode();
+                if (node != null) {
+                    // Hacemos el punto transparente para que se vea como una línea limpia
+                    node.setStyle("-fx-background-color: transparent, transparent;");
 
-            // Cuando el ratón ENTRA al punto de la gráfica
-            node.setOnMouseEntered(e -> {
-                Point2D px = proj.project(tpAsociado); // Calculamos su posición en el mapa
-                punteroMapa.setCenterX(px.getX());
-                punteroMapa.setCenterY(px.getY());
-                if (!mapPane.getChildren().contains(punteroMapa)) {
-                    mapPane.getChildren().add(punteroMapa);
+                    // Cuando el ratón ENTRA al punto de la gráfica
+                    node.setOnMouseEntered(e -> {
+                        Point2D px = proj.project(tpAsociado); // Calculamos su posición en el mapa
+                        punteroMapa.setCenterX(px.getX());
+                        punteroMapa.setCenterY(px.getY());
+                        if (!mapPane.getChildren().contains(punteroMapa)) {
+                            mapPane.getChildren().add(punteroMapa);
+                        }
+                    });
+
+                    // Cuando el ratón SALE del punto de la gráfica
+                    node.setOnMouseExited(e -> {
+                        mapPane.getChildren().remove(punteroMapa);
+                    });
                 }
-            });
+            }
+    }
+    @FXML
+    private void abrirVentanaAnadirMapa(ActionEvent event) {
+        // 1. Creamos el diálogo
+        Dialog<MapRegion> dialog = new Dialog<>();
+        dialog.setTitle("Añadir Nuevo Mapa");
+        dialog.setHeaderText("Introduce los datos del script generar_mapas_hd.py");
 
-            // Cuando el ratón SALE del punto de la gráfica
-            node.setOnMouseExited(e -> {
-                mapPane.getChildren().remove(punteroMapa);
-            });
-        }
-      }
+        // 2. Creamos los campos de texto
+        TextField txtNombre = new TextField();
+        txtNombre.setPromptText("Nombre de la región (ej: Montanejos)");
+        TextField txtLatMin = new TextField();
+        txtLatMin.setPromptText("Latitud Mínima");
+        TextField txtLatMax = new TextField();
+        txtLatMax.setPromptText("Latitud Máxima");
+        TextField txtLonMin = new TextField();
+        txtLonMin.setPromptText("Longitud Mínima");
+        TextField txtLonMax = new TextField();
+        txtLonMax.setPromptText("Longitud Máxima");
+
+        Button btnSeleccionarImagen = new Button("Seleccionar Imagen JPG");
+        final File[] archivoSeleccionado = new File[1];
+
+        btnSeleccionarImagen.setOnAction(e -> {
+            FileChooser fc = new FileChooser();
+            fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes JPG", "*.jpg"));
+            archivoSeleccionado[0] = fc.showOpenDialog(null);
+            if (archivoSeleccionado[0] != null) {
+                btnSeleccionarImagen.setText(archivoSeleccionado[0].getName());
+            }
+        });
+
+        // 3. Organizamos los campos en la ventana
+        VBox content = new VBox(10, 
+            new Label("Nombre:"), txtNombre,
+            btnSeleccionarImagen,
+            new Label("Coordenadas (Bounding Box):"),
+            txtLatMin, txtLatMax, txtLonMin, txtLonMax
+        );
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // 4. Lógica al pulsar OK
+        dialog.setResultConverter(button -> {
+            if (button == ButtonType.OK && archivoSeleccionado[0] != null) {
+                try {
+                    // Llamamos a la librería para registrar el mapa 
+                    return SportActivityApp.getInstance().addMapRegion(
+                        txtNombre.getText(),
+                        archivoSeleccionado[0],
+                        Double.parseDouble(txtLatMin.getText()),
+                        Double.parseDouble(txtLatMax.getText()),
+                        Double.parseDouble(txtLonMin.getText()),
+                        Double.parseDouble(txtLonMax.getText())
+                    );
+                } catch (NumberFormatException e) {
+                    mostrarError("Las coordenadas deben ser números decimales.");
+                }
+            }
+            return null;
+        });
+
+        Optional<MapRegion> result = dialog.showAndWait();
+        result.ifPresent(region -> {
+            System.out.println("Mapa añadido correctamente: " + region.getName());
+        });
+    }
+    private void mostrarError(String mensaje) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }
