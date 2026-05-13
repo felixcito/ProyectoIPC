@@ -23,11 +23,11 @@ public class MapaDemoApp extends Application {
     public void start(Stage stage) throws Exception {
         //Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         //Ahora cargamos la pagina login primero
-        Parent root = FXMLLoader.load(getClass().getResource("LoginVista.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("LoginVisita.fxml"));
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/resources/logo.png")));
         Scene scene = new Scene(root);
         //stage.setTitle("Demo mapas - IPC");
-        stage.setTitle("Running la Safor - Login");
+        stage.setTitle("Running la Safor - Login"); 
         stage.setScene(scene);
         stage.show();
     }

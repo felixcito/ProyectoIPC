@@ -71,6 +71,7 @@
             <Button mnemonicParsing="false" onAction="#importarGPX" text="Importar GPX" />
             <Button mnemonicParsing="false" onAction="#verHistorial" text="Historial" />
             <Button mnemonicParsing="false" onAction="#cerrarSesion" text="Cerrar Sesion" />
+            <Button mnemonicParsing="false" onAction="#mostrarTotales" text="Ver totales" />
             <Region HBox.hgrow="ALWAYS" />
             <Label text="Zoom" />
             <Button mnemonicParsing="false" onAction="#zoomOut" text="-" />

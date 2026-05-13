@@ -10,19 +10,16 @@
  *  Este controlador gestiona la vista principal de la aplicación
  *  de puntos de interés (POI) sobre un mapa.
  *
- *  Funcionalidades implementadas:
- *   1. Carga y visualización de una imagen de mapa.
- *   2. Zoom interactivo mediante un Slider.
- *   3. Añadir POIs (texto) y anotaciones (círculos) con clic derecho.
- *   4. Listado de POIs en un ListView con CellFactory personalizada.
- *   5. Centrado animado del mapa al seleccionar un POI de la lista.
- *   6. Modo inserción: activar con botón y colocar POI con siguiente clic.
+ * Funcionalidades implementadas:
+ * 1. Carga y visualización de una imagen de mapa dinámica según la ruta.
+ * 2. Zoom interactivo mediante un Slider.
+ * 3. Importación de ficheros GPX.
+ * 4. Añadir anotaciones personalizadas en el mapa con clic derecho.
+ * 5. Listado de Actividades en un ListView con CellFactory personalizada.
+ * 6. Dibujado del trazado y centrado animado al seleccionar una ruta.
  *
- *  PATRÓN UTILIZADO: MVC (Model-View-Controller)
- *   - Modelo : clase Poi  (datos del punto de interés)
- *   - Vista  : FXMLDocument.fxml  (layout declarativo)
- *   - Control: esta clase (lógica de interacción)
- *
+ * PATRÓN UTILIZADO: MVC (Model-View-Controller)
+ * - Modelo : Clases Activity y Annotation (Librería IPC2026)
  * ============================================================
  */
 package mapademo;
@@ -83,7 +80,7 @@ import upv.ipc.sportlib.SportActivityApp;
 import upv.ipc.sportlib.TrackPoint;
 
 /**
- * Controlador principal de la aplicación de mapa con POIs.
+ * Controlador principal de la aplicación de gestión de actividades deportivas.
  *
  * La anotación @FXML conecta automáticamente los campos de esta clase
  * con los elementos declarados en el fichero FXML mediante su atributo fx:id.
@@ -130,20 +127,14 @@ public class FXMLDocumentController implements Initializable {
     /** Menú contextual reutilizable para el clic derecho sobre el mapa. */
     private ContextMenu mapContextMenu;
 
-    
-    /**
-     * Indica si el controlador está en modo inserción de POI.
-     * {@code true} → el próximo clic izquierdo sobre el mapa abre el diálogo.
-    */
-    private boolean insertionMode = false;
-
+ 
     // =========================================================
     //  ELEMENTOS FXML  (inyectados automáticamente por el cargador)
     // =========================================================
 
     /** Lista lateral que muestra todos los POIs añadidos al mapa. */
     @FXML
-    private ListView<Poi> map_listview;
+    private ListView<Activity> map_listview;
 
     /** ScrollPane que envuelve el mapa y permite desplazarlo. */
     @FXML
@@ -270,46 +261,60 @@ public class FXMLDocumentController implements Initializable {
      */
     @FXML
     void listClicked(MouseEvent event) {
-        // Obtenemos el POI seleccionado; si no hay ninguno, salimos
-        Poi itemSelected = map_listview.getSelectionModel().getSelectedItem();
-        if (itemSelected == null) return;
+        
+        // 1. Obtenemos la Actividad (no el Poi) seleccionada
+        Activity seleccionada = map_listview.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) return;
 
-        // ── Dimensiones del mapa con el zoom actual aplicado ──────────
+        // 2. CARGA DE DATOS        
+        this.actividadActual = seleccionada; 
+        dibujarRuta(seleccionada); // Este método ya pinta la línea y prepara el 'proj'
+
+        // Actualizamos las etiquetas de texto con los números de esta ruta 
+        labelDistancia.setText("Distancia: " + String.format("%.2f", seleccionada.getTotalDistance() / 1000.0) + " km");
+        labelDuracion.setText("Duración: " + seleccionada.getDuration().toMinutes() + " min");
+        labelVelocidadMedia.setText("Velocidad media: " + String.format("%.2f", seleccionada.getAverageSpeed()) + " km/h");
+        labelRitmoMedio.setText("Ritmo medio: " + seleccionada.getAveragePace() + " min/km");
+        labelDesnivel.setText("Desnivel+: " + seleccionada.getElevationGain() + " m");
+        labelDesnivelNegativo.setText("Desnivel-: " + seleccionada.getElevationLoss() + " m");
+        labelAltitudMinima.setText("Altitud mín: " + seleccionada.getMinElevation() + " m");
+        labelAltitudMaxima.setText("Altitud máx: " + seleccionada.getMaxElevation() + " m");
+
+        // Dibujamos las anotaciones que ya estaban guardadas en la base de datos 
+        for (Annotation nota : seleccionada.getAnnotations()) {
+            Point2D p = proj.project(nota.getGeoPoints().get(0));
+            // 1. Creamos el texto primero
+            Text t = new Text(nota.getText());
+
+            // 2. Le asignamos las coordenadas X e Y
+            t.setX(p.getX());
+            t.setY(p.getY());
+
+            // 3. Le ponemos el estilo (esta línea ya la tenías)
+            t.setStyle("-fx-fill: " + nota.getColor() + "; -fx-font-weight: bold;");
+            mapPane.getChildren().add(t);
+        }
+
+        // 3. ANIMACIÓN Y CENTRADO (Lo que tenía tu código original)
+        // Usamos el punto de inicio de la ruta para centrar el mapa
+        Point2D inicioEscalado = proj.project(seleccionada.getStartPoint());
+        double poiX = inicioEscalado.getX() * zoomGroup.getScaleX();
+        double poiY = inicioEscalado.getY() * zoomGroup.getScaleY();
+
         double mapWidth  = mapPane.getWidth()  * zoomGroup.getScaleX();
         double mapHeight = mapPane.getHeight() * zoomGroup.getScaleY();
-
-        // ── Posición del POI escalada ──────────────────────────────────
-        // getPosition() devuelve las coordenadas en el sistema local del
-        // mapPane (sin zoom). Las multiplicamos por el factor de escala
-        // para obtener la posición real en pantalla.
-        double poiX = itemSelected.getPosition().getX() * zoomGroup.getScaleX();
-        double poiY = itemSelected.getPosition().getY() * zoomGroup.getScaleY();
-
-        // ── Tamaño visible del ScrollPane (viewport) ───────────────────
         double viewW = map_scrollpane.getViewportBounds().getWidth();
         double viewH = map_scrollpane.getViewportBounds().getHeight();
 
-        // ── Cálculo del scroll normalizado [0, 1] ─────────────────────
-        // Restamos la mitad del viewport para que el POI quede centrado
-        // y no en la esquina superior-izquierda del área visible.
-        double scrollH = (poiX - viewW / 2) / (mapWidth  - viewW);
-        double scrollV = (poiY - viewH / 2) / (mapHeight - viewH);
+        double scrollH = Math.max(0, Math.min(1, (poiX - viewW / 2) / (mapWidth  - viewW)));
+        double scrollV = Math.max(0, Math.min(1, (poiY - viewH / 2) / (mapHeight - viewH)));
 
-        // Garantizamos que el valor esté dentro del rango válido [0, 1]
-        scrollH = Math.max(0, Math.min(1, scrollH));
-        scrollV = Math.max(0, Math.min(1, scrollV));
-
-        // ── Animación suave con Timeline ──────────────────────────────
-        // Timeline interpola los valores de las propiedades a lo largo
-        // del tiempo. KeyValue define qué propiedad animar y hasta qué
-        // valor; KeyFrame define en qué instante se alcanza ese valor.
         final Timeline timeline = new Timeline();
-        final KeyValue kv1 = new KeyValue(map_scrollpane.hvalueProperty(), scrollH);
-        final KeyValue kv2 = new KeyValue(map_scrollpane.vvalueProperty(), scrollV);
-        final KeyFrame kf  = new KeyFrame(Duration.millis(500), kv1, kv2);
-        timeline.getKeyFrames().add(kf);
-        timeline.play(); // Inicia la animación (no bloquea el hilo de la UI)
-
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(500), 
+            new KeyValue(map_scrollpane.hvalueProperty(), scrollH),
+            new KeyValue(map_scrollpane.vvalueProperty(), scrollV)
+        ));
+        timeline.play(); 
     }
 
     // =========================================================
@@ -351,20 +356,15 @@ public class FXMLDocumentController implements Initializable {
         iv.setFitHeight(H);
         mapPane.getChildren().add(iv);
 
-        // ── Manejador de clics sobre el mapa ──────────────────────────
-        // Gestionamos el clic derecho (menú contextual) y el clic izquierdo
-        // en modo inserción (FIX 2).
+       // ── Manejador de clics sobre el mapa ──────────────────────────
+        // Gestionamos el clic derecho (menú contextual) para añadir anotaciones.
+        
         mapPane.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
-                // Clic derecho → mostrar menú contextual
+                // Clic derecho → mostrar menú contextual para añadir tus Anotaciones
                 onMapRightClick(e.getX(), e.getY());
-
-            } else if (e.getButton() == MouseButton.PRIMARY && insertionMode) {
-                // FIX 2: clic izquierdo en modo inserción → añadir POI y desactivar modo
-                insertionMode = false;
-                mapPane.setStyle(""); // Restauramos el cursor normal
-                addPoi(e.getX(), e.getY());
-            }
+            } 
+            // Hemos eliminado el 'else if' antiguo porque ya no usamos los POIs
         });
 
         // ── Jerarquía de Groups para el zoom ──────────────────────────
@@ -455,25 +455,24 @@ public class FXMLDocumentController implements Initializable {
         MenuItem miCircle = new MenuItem("⭕ Añadir círculo");
         mapContextMenu = new ContextMenu(miText, miCircle);
 
-               //  setCellFactory() define cómo se renderiza cada celda
-        //  de forma independiente al modelo Poi.
-        //  Aquí mostramos "CÓDIGO – Nombre" en cada fila.
-        map_listview.setCellFactory(listView -> new ListCell<Poi>() {
+       
+        map_listview.setCellFactory(listView -> new ListCell<Activity>() {
             @Override
-            protected void updateItem(Poi poi, boolean empty) {
-                // Siempre llamar a super primero (requerido por JavaFX)
-                super.updateItem(poi, empty);
-
-                if (empty || poi == null) {
-                    // Celda vacía: limpiamos texto y gráfico
+            protected void updateItem(Activity activity, boolean empty) {
+                super.updateItem(activity, empty);
+                if (empty || activity == null) {
                     setText(null);
-                    setGraphic(null);
                 } else {
-                    // Mostramos código y nombre separados por un guión largo
-                    setText(poi.getCode() + " – " + poi.getPosition());
+                    // Muestra el nombre de la ruta, o "Actividad sin nombre" si no tiene
+                    setText(activity.getName() != null ? activity.getName() : "Actividad " + activity.getId());
                 }
             }
         });
+
+        // ── Carga de actividades al arrancar la pantalla ───────────────
+        // ¡Las ponemos aquí fuera para que solo se ejecute UNA VEZ!
+        List<Activity> misActividades = SportActivityApp.getInstance().getUserActivities();
+        map_listview.getItems().addAll(misActividades);
 
         // ── Carga del mapa inicial ─────────────────────────────────────
         // El fichero se busca relativo al directorio de trabajo del proyecto.
@@ -531,74 +530,7 @@ public class FXMLDocumentController implements Initializable {
         mensaje.showAndWait(); // Bloquea hasta que el usuario cierra el diálogo
     }
 
-    // =========================================================
-    //  AÑADIR UN POI (texto) AL MAPA
-    // =========================================================
-
-    /**
-     * Muestra un diálogo para introducir el nombre del nuevo POI,
-     * lo añade al ListView y dibuja su etiqueta sobre el mapa.
-     *
-     * @param x coordenada X del clic en el sistema local del mapPane
-     * @param y coordenada Y del clic en el sistema local del mapPane
-     */
-    private void addPoi(double x, double y) {
-
-        // ── Construcción del diálogo personalizado ────────────────────
-        Dialog<Poi> poiDialog = new Dialog<>();
-        poiDialog.setTitle("Nuevo POI");
-        poiDialog.setHeaderText("Introduce un nuevo POI");
-
-        // Personalizamos el icono de la ventana del diálogo
-        Stage dialogStage = (Stage) poiDialog.getDialogPane().getScene().getWindow();
-        dialogStage.getIcons().add(
-            new Image(getClass().getResourceAsStream("/resources/logo.png"))
-        );
-
-        // Botones del diálogo: Aceptar y Cancelar
-        ButtonType okButton = new ButtonType("Aceptar", ButtonBar.ButtonData.OK_DONE);
-        poiDialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
-
-        // Campo de texto para el nombre del POI
-        TextField nameField = new TextField();
-        nameField.setPromptText("Nombre del POI");
-
-        // Layout del contenido del diálogo (VBox con espaciado de 10 px)
-        VBox vbox = new VBox(10, new Label("Nombre:"), nameField);
-        poiDialog.getDialogPane().setContent(vbox);
-
-        // ResultConverter: transforma la selección del botón en un objeto Poi.
-        // FIX 1: ya no usamos coordenadas provisionales (0,0); pasamos (x,y)
-        // directamente al constructor para que el modelo sea coherente desde el inicio.
-        poiDialog.setResultConverter(dialogButton -> {
-            if (dialogButton == okButton) {
-                return new Poi(nameField.getText().trim(), x, y);
-            }
-            return null;
-        });
-
-        // Mostramos el diálogo y esperamos la respuesta del usuario
-        Optional<Poi> result = poiDialog.showAndWait();
-
-        if (result.isPresent()) {
-            Poi poi = result.get();
-
-            // FIX 1: confirmamos la posición como Point2D para compatibilidad
-            // con getPosition(), usando las mismas coordenadas (x, y).
-            poi.setPosition(new Point2D(x, y));
-
-            // Añadimos el POI al ListView (la CellFactory mostrará nombre y código)
-            map_listview.getItems().add(poi);
-
-            // FIX 1: usamos (x, y) tanto para el modelo como para el Text,
-            // garantizando que la etiqueta aparezca exactamente donde se hizo clic.
-            Text text = new Text(poi.getCode());
-            text.setX(x);
-            text.setY(y);
-            mapPane.getChildren().add(text);
-        }
-    }
-
+    
     // =========================================================
     //  CAMBIAR EL MAPA (selector de fichero)
     // =========================================================
@@ -629,29 +561,11 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    
     // =========================================================
-    //  AÑADIR UN CÍRCULO AL MAPA
+    //  Importar GPX
     // =========================================================
-
-    /**
-     * Dibuja un círculo rojo de radio 10 px en la posición indicada.
-     *
-     * Ejemplo sencillo de cómo añadir formas vectoriales (Shape) sobre el mapa.
-     * Los alumnos pueden extenderlo para:
-     *  - Elegir color dinámicamente.
-     *  - Asociar información al círculo (tooltip, popup, etc.).
-     *  - Permitir moverlo con arrastrar y soltar (drag and drop).
-     *
-     * @param x coordenada X en el sistema local del mapPane
-     * @param y coordenada Y en el sistema local del mapPane
-     */
-    private void addCircle(double x, double y) {
-        Circle circle = new Circle(10, Color.RED); // radio = 10 px, color = rojo
-        circle.setCenterX(x);
-        circle.setCenterY(y);
-        mapPane.getChildren().add(circle); // Se añade sobre el mapa como cualquier nodo
-    }
-
+    
     @FXML
     private void importarGPX(ActionEvent event) {
         // 1. Abrimos el buscador de archivos
@@ -689,7 +603,11 @@ public class FXMLDocumentController implements Initializable {
             }
         }
     }
-
+    
+    // =========================================================
+    //  Dibujar ruta
+    // =========================================================
+    
     private void dibujarRuta(Activity activity) {
         // 1. Obtenemos el mapa sugerido por la librería para esta ruta
         MapRegion region = activity.getSuggestedMap();
@@ -700,7 +618,7 @@ public class FXMLDocumentController implements Initializable {
         }
 
         // 2. Creamos el objeto matemático para convertir coordenadas 
-        MapProjection proj = new MapProjection(region, mapPane.getWidth(), mapPane.getHeight());
+        this.proj = new MapProjection(region, mapPane.getWidth(), mapPane.getHeight());
 
         // 3. Creamos la línea (Polyline)
         Polyline route = new Polyline();
@@ -725,6 +643,10 @@ public class FXMLDocumentController implements Initializable {
 
         mapPane.getChildren().addAll(circleInicio, circleFin);
     }
+    
+    // =========================================================
+    //  Crear Anotacion
+    // =========================================================
     
     private void crearAnotacionReal(double x, double y) {
         if (actividadActual == null) return; // Si no hay ruta cargada, no hacemos nada
@@ -826,4 +748,39 @@ public class FXMLDocumentController implements Initializable {
             System.err.println("Error al cargar la ventana de historial: " + e.getMessage());
         }
     }
+
+   @FXML
+    private void mostrarTotales(ActionEvent event) {
+            double distanciaTotal = 0;
+            double ascensoTotal = 0;
+            double descensoTotal = 0;
+            long segundosTotales = 0;
+
+            // Obtenemos todas las actividades de la base de datos
+            List<Activity> actividades = SportActivityApp.getInstance().getUserActivities();
+
+            // Sumamos todo
+            for (Activity a : actividades) {
+                distanciaTotal += a.getTotalDistance();
+                ascensoTotal += a.getElevationGain();
+                descensoTotal += a.getElevationLoss();
+                segundosTotales += a.getDuration().getSeconds();
+            }
+
+            // Convertimos los segundos a horas y minutos para que se lea mejor
+            long horas = segundosTotales / 3600;
+            long minutos = (segundosTotales % 3600) / 60;
+
+            // Mostramos un mensaje emergente (Alert) con los totales 
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Acumulado de actividades");
+            alert.setHeaderText("Totales del usuario");
+            alert.setContentText(
+                "Distancia total: " + String.format("%.2f", distanciaTotal / 1000.0) + " km\n" +
+                "Tiempo total: " + horas + "h " + minutos + "m\n" +
+                "Ascenso total: " + ascensoTotal + " m\n" +
+                "Descenso total: " + descensoTotal + " m"
+            );
+            alert.showAndWait();
+        }
 }
