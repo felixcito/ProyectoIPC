@@ -42,6 +42,10 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -122,6 +126,7 @@ public class FXMLDocumentController implements Initializable {
     private Pane mapPane;
     private Activity actividadActual; // Guarda la ruta que has importado
     private MapProjection proj;       // Necesaria para convertir píxeles a GPS
+    
 
     
     /** Menú contextual reutilizable para el clic derecho sobre el mapa. */
@@ -139,6 +144,10 @@ public class FXMLDocumentController implements Initializable {
     /** ScrollPane que envuelve el mapa y permite desplazarlo. */
     @FXML
     private ScrollPane map_scrollpane;
+    
+    /** Grafica de la altitud y distancia de la actividad */
+    @FXML
+    private LineChart<Number, Number> chartDesnivel;
 
     /**
      * Slider de zoom.
@@ -147,6 +156,9 @@ public class FXMLDocumentController implements Initializable {
      */
     @FXML
     private Slider zoom_slider;
+    
+    // Este es el puntito que se moverá por el mapa
+    private Circle punteroMapa = new Circle(6, Color.MAGENTA);
 
     /**
      * Botón de pin visible sobre el mapa.
@@ -179,6 +191,10 @@ public class FXMLDocumentController implements Initializable {
     private Label labelAltitudMaxima;
     @FXML
     private Label labelDesnivelNegativo;
+    @FXML
+    private NumberAxis yAxis;
+    @FXML
+    private NumberAxis xAxis;
  
 
     // =========================================================
@@ -315,6 +331,9 @@ public class FXMLDocumentController implements Initializable {
             new KeyValue(map_scrollpane.vvalueProperty(), scrollV)
         ));
         timeline.play(); 
+        
+        /** actualiza la grafica de la actividad */
+        actualizarGrafica(seleccionada);
     }
 
     // =========================================================
@@ -596,6 +615,10 @@ public class FXMLDocumentController implements Initializable {
 
                 // 4. Dibujar ruta en el mapa
                 dibujarRuta(actividad);
+                
+                // 5. Actualiza la grafica de la actividad
+                actualizarGrafica(actividad);
+                
             
             } catch (Exception e) {
                 System.err.println("Error al cerrar sesión: " + e.getMessage());
@@ -619,20 +642,32 @@ public class FXMLDocumentController implements Initializable {
 
         // 2. Creamos el objeto matemático para convertir coordenadas 
         this.proj = new MapProjection(region, mapPane.getWidth(), mapPane.getHeight());
+        
+        // 3 y 4. Recorremos los puntos de dos en dos para crear los pequeños tramos
+        List<TrackPoint> puntosRuta = activity.getTrackPoints();
+        for (int i = 0; i < puntosRuta.size() - 1; i++) {
+            TrackPoint tp1 = puntosRuta.get(i);
+            TrackPoint tp2 = puntosRuta.get(i + 1);
 
-        // 3. Creamos la línea (Polyline)
-        Polyline route = new Polyline();
-        route.setStroke(Color.BLUE);
-        route.setStrokeWidth(3.0);
+            Point2D p1 = proj.project(tp1);
+            Point2D p2 = proj.project(tp2);
 
-        // 4. Recorremos todos los puntos del GPS y los añadimos a la línea [cite: 145-148]
-        for (TrackPoint tp : activity.getTrackPoints()) {
-            Point2D p = proj.project(tp); // Convertimos lat/lon a píxeles X/Y
-            route.getPoints().addAll(p.getX(), p.getY());
+            // Calculamos la velocidad de este tramo en concreto en km/h
+            double velocidad = tp1.speedTo(tp2);
+
+            // Mapeamos la velocidad a un color (0 = Rojo, 120 = Verde)
+            // Asumimos un tope de 20 km/h para el color verde máximo
+            double tono = Math.max(0, Math.min(120, (velocidad / 20.0) * 120));
+            Color colorTramo = Color.hsb(tono, 1.0, 0.8);
+
+            // Creamos la línea para este pequeño tramo
+            javafx.scene.shape.Line segmento = new javafx.scene.shape.Line(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+            segmento.setStroke(colorTramo);
+            segmento.setStrokeWidth(4.0);
+
+            // 5. Añadimos el tramo al mapa
+            mapPane.getChildren().add(segmento);
         }
-
-        // 5. Añadimos la línea al mapa
-        mapPane.getChildren().add(route);
 
         // 6. Añadimos círculo verde al inicio y rojo al final 
         Point2D pInicio = proj.project(activity.getStartPoint());
@@ -783,4 +818,61 @@ public class FXMLDocumentController implements Initializable {
             );
             alert.showAndWait();
         }
+    
+    private void actualizarGrafica(Activity activity) {
+            // 1. Limpiamos la gráfica por si había otra ruta antes
+            chartDesnivel.getData().clear();
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+            series.setName("Perfil de elevación");
+
+            double distanciaAcumulada = 0;
+            List<TrackPoint> puntos = activity.getTrackPoints();
+
+            // 2. Recorremos los puntos para calcular distancia y altitud [cite: 217, 271]
+            for (int i = 0; i < puntos.size(); i++) {
+                TrackPoint actual = puntos.get(i);
+
+                if (i > 0) {
+                    TrackPoint anterior = puntos.get(i - 1);
+                    // Calculamos la distancia entre el punto anterior y el actual
+                    distanciaAcumulada += actual.distanceTo(anterior);
+                }
+
+                // Añadimos el punto: (Distancia en km, Altitud en metros)
+                series.getData().add(new XYChart.Data<>(distanciaAcumulada / 1000.0, actual.getElevation()));
+            }
+
+            // 3. Metemos los datos en la gráfica
+    chartDesnivel.getData().add(series);
+
+    // 4. INTERACCIÓN GRÁFICA -> MAPA
+    // Activamos los símbolos para poder detectarlos con el ratón
+    chartDesnivel.setCreateSymbols(true); 
+
+    for (int i = 0; i < series.getData().size(); i++) {
+        XYChart.Data<Number, Number> data = series.getData().get(i);
+        final TrackPoint tpAsociado = puntos.get(i); // Guardamos qué punto del GPS es
+
+        javafx.scene.Node node = data.getNode();
+        if (node != null) {
+            // Hacemos el punto transparente para que se vea como una línea limpia
+            node.setStyle("-fx-background-color: transparent, transparent;");
+
+            // Cuando el ratón ENTRA al punto de la gráfica
+            node.setOnMouseEntered(e -> {
+                Point2D px = proj.project(tpAsociado); // Calculamos su posición en el mapa
+                punteroMapa.setCenterX(px.getX());
+                punteroMapa.setCenterY(px.getY());
+                if (!mapPane.getChildren().contains(punteroMapa)) {
+                    mapPane.getChildren().add(punteroMapa);
+                }
+            });
+
+            // Cuando el ratón SALE del punto de la gráfica
+            node.setOnMouseExited(e -> {
+                mapPane.getChildren().remove(punteroMapa);
+            });
+        }
+      }
+    }
 }
