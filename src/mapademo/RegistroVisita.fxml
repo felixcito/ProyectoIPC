@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -51,7 +52,7 @@
                <children>
                   <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="75.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                      <children>
-                        <Circle fill="#1f93ff00" radius="40.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle-avatar" />
+                        <Circle fx:id="circleImage" fill="#1f93ff00" radius="40.0" stroke="BLACK" strokeType="INSIDE" styleClass="circle-avatar" />
                         <ImageView fx:id="avatarImage" fitHeight="125.0" fitWidth="125.0" onMouseClicked="#changeAvatar" pickOnBounds="true">
                            <image>
                               <Image url="@../resources/camera.png" />
@@ -126,14 +127,39 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
                      </rowConstraints>
                      <children>
-                        <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="29.0" prefWidth="262.0" promptText="*********************" styleClass="register-input" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                           <opaqueInsets>
-                              <Insets left="10.0" />
-                           </opaqueInsets>
-                           <font>
-                              <Font name="Poppins Regular" size="12.0" />
-                           </font>
-                        </TextField>
+                        <StackPane alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="29.0" prefWidth="262.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <children>
+                              <PasswordField fx:id="passwordHide" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="29.0" prefWidth="215.0" promptText="*********************" styleClass="register-password">
+                                 <font>
+                                    <Font name="Poppins Regular" size="12.0" />
+                                 </font>
+                              </PasswordField>
+                              <TextField fx:id="passwordShow" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="29.0" prefWidth="215.0" promptText="*********************" styleClass="register-input" visible="false">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                                 <font>
+                                    <Font name="Poppins Regular" size="12.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </StackPane>
+                        <ImageView fx:id="ojoTachado" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#showPassword" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <image>
+                              <Image url="@../resources/ojo_tachado.png" />
+                           </image>
+                           <GridPane.margin>
+                              <Insets right="15.0" />
+                           </GridPane.margin>
+                        </ImageView>
+                        <ImageView fx:id="ojoVisible" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#hidePassword" pickOnBounds="true" preserveRatio="true" visible="false" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <image>
+                              <Image url="@../resources/ojo.png" />
+                           </image>
+                           <GridPane.margin>
+                              <Insets right="15.0" />
+                           </GridPane.margin>
+                        </ImageView>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="register-text" text="Password: *" GridPane.columnSpan="2">
                            <GridPane.margin>
                               <Insets bottom="5.0" left="5.0" />
@@ -146,7 +172,7 @@
                      </font></Button>
                   <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="register-text" text="Date picker">
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="register-text" text="Birth date: *">
                            <VBox.margin>
                               <Insets left="5.0" />
                            </VBox.margin></Text>
@@ -164,7 +190,7 @@
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="11">
                      <children>
                         <CheckBox mnemonicParsing="false" styleClass="login-checkbox" text="I accept" />
-                        <Hyperlink styleClass="hyprland" text="terms and conditions" textFill="WHITE">
+                        <Hyperlink fx:id="hyperlinkTerminos" onAction="#showTerms" styleClass="hyprland" text="terms and conditions" textFill="WHITE">
                            <font>
                               <Font name="Poppins Bold" size="12.0" />
                            </font>

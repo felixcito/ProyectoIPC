@@ -28,7 +28,7 @@ public class MapaDemoApp extends Application {
         // --------------------------------------------
 
         // Cambiamos el archivo que se carga al arrancar
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("LoginVisita.fxml"));
 
         Scene scene = new Scene(root);
         stage.setScene(scene);

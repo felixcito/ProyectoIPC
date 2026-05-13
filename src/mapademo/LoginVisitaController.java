@@ -4,16 +4,23 @@
  */
 package mapademo;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -40,5 +47,19 @@ public class LoginVisitaController implements Initializable {
         fondo_login.setEffect(new GaussianBlur(10));
         // TODO
     }    
-    
+
+    @FXML
+    private void irRegister(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(
+            getClass().getResource("RegistroVisita.fxml")
+        );
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+
+        stage.setScene(new Scene(root));
+
+        stage.show();
+    }
 }
