@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
@@ -37,6 +38,11 @@ public class LoginVisitaController implements Initializable {
     private TextField Nickname;
     private Rectangle rectBlur;
 
+    @FXML
+    private TextField campoNickname; // fx:id "campoNickname"
+    @FXML
+    private PasswordField campoPassoword; // fx:id "campoPassoword"
+    
     /**
      * Initializes the controller class.
      * @param url
@@ -61,5 +67,40 @@ public class LoginVisitaController implements Initializable {
         stage.setScene(new Scene(root));
 
         stage.show();
+    }
+    @FXML
+    private void realizarLogin(ActionEvent event) {
+        String nick = campoNickname.getText();
+        String pass = campoPassoword.getText();
+
+        // 1. Intentar iniciar sesión con la librería
+        // Retorna true si las credenciales son correctas [cite: 267]
+        boolean ok = upv.ipc.sportlib.SportActivityApp.getInstance().login(nick, pass);
+
+        if (ok) {
+            try {
+                // 2. Si el login es correcto, cargamos la pantalla del mapa (FXMLDocument.fxml)
+                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("FXMLDocument.fxml"));
+                javafx.scene.Parent root = loader.load();
+
+                // 3. Obtener la ventana actual y cambiar la escena
+                javafx.stage.Stage stage = (javafx.stage.Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+                stage.setScene(new javafx.scene.Scene(root));
+                stage.setTitle("Running la Safor - Principal");
+                stage.show();
+            } catch (java.io.IOException e) {
+                mostrarError("Error al cargar la vista principal: " + e.getMessage());
+            }
+        } else {
+            // 4. Si falla, mostramos un error de credenciales [cite: 57, 267]
+            mostrarError("Usuario o contraseña incorrectos.");
+        }
+    }
+    
+    private void mostrarError(String mensaje) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }
