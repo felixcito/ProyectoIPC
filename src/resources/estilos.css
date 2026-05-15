@@ -491,3 +491,66 @@ S17.642,20.762,13.558,20.762z";
 
     -fx-border-color: transparent;
 }
+
+/* ---------- TABLE VIEW (Dark Theme para Historial) ---------- */
+
+.table-view {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: rgba(50,50,50,0.85);
+    -fx-background-radius: 10 10 0 0;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 35px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-family: "Poppins";
+    -fx-font-size: 13px;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: rgba(50,50,50,0.5);
+    -fx-border-color: transparent transparent rgba(255,255,255,0.1) transparent;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: rgba(30,30,30,0.5); /* Alterna el color de las filas */
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #5a2ccf; /* El mismo morado de los checkbox de tu compañero */
+}
+
+.table-view .table-cell {
+    -fx-text-fill: white;
+    -fx-font-family: "Poppins";
+    -fx-font-size: 12px;
+    -fx-alignment: CENTER;
+}
+
+.table-view .virtual-flow .scroll-bar:vertical,
+.table-view .virtual-flow .scroll-bar:vertical .track,
+.table-view .virtual-flow .scroll-bar:vertical .track-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .virtual-flow .scroll-bar .thumb {
+    -fx-background-color: rgba(255,255,255,0.3);
+    -fx-background-radius: 5;
+}
+
+/* ---------- TEXT ---------- */
+
+.register-text {
+    -fx-fill: white;
+    -fx-text-fill: white; /* <--- AÑADE ESTA LÍNEA */
+    -fx-font-size: 13px;
+}
