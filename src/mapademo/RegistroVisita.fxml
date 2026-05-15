@@ -194,6 +194,12 @@
                            <font>
                               <Font name="Poppins Bold" size="12.0" />
                            </font>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                           <padding>
+                              <Insets right="4.0" />
+                           </padding>
                         </Hyperlink>
                      </children>
                   </HBox>

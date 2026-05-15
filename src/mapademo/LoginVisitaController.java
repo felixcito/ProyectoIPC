@@ -35,15 +35,17 @@ public class LoginVisitaController implements Initializable {
     private GridPane grid;
     @FXML
     private VBox fondo_login;
-    private Rectangle rectBlur;
-
     @FXML
-    private TextField campoNickname; // fx:id "campoNickname"
-    private PasswordField campoPassoword; // fx:id "campoPassoword"
+    private ImageView person_icon;
+    @FXML
+    private ImageView lock_icon;
+    @FXML
+    private TextField campoNickname;
     @FXML
     private TextField campoPassword;
     @FXML
     private Button login;
+
     
     /**
      * Initializes the controller class.
@@ -52,8 +54,17 @@ public class LoginVisitaController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        fondo_login.setEffect(new GaussianBlur(10));
-        // TODO
+        campoNickname.textProperty().addListener((obs, oldText, newText) -> {
+            boolean visible = newText.length() < 25;
+            person_icon.setVisible(visible);
+            person_icon.setManaged(visible);
+        });
+        
+        campoPassword.textProperty().addListener((obs, oldText, newText) -> {
+            boolean visible = newText.length() < 25;
+            lock_icon.setVisible(visible);
+            lock_icon.setManaged(visible);
+        });
     }    
 
     @FXML
@@ -73,7 +84,7 @@ public class LoginVisitaController implements Initializable {
     @FXML
     private void realizarLogin(ActionEvent event) {
         String nick = campoNickname.getText();
-        String pass = campoPassoword.getText();
+        String pass = campoPassword.getText();
 
         // 1. Intentar iniciar sesión con la librería
         // Retorna true si las credenciales son correctas [cite: 267]
