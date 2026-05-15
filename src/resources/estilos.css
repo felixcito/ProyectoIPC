@@ -185,6 +185,33 @@ S17.642,20.762,13.558,20.762z";
     -fx-border-color: rgba(255,255,255,0.45);
 }
 
+.login-password {
+    -fx-background-color: rgba(50,50,50,0.70);
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+    -fx-border-color: rgba(255,255,255,0.18);
+
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.70);
+
+    -fx-padding: 12 24 12 18;
+
+    -fx-font-family: "Cascadia Code";
+    -fx-font-size: 14px;
+
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+
+    -fx-control-inner-background: transparent;
+
+    -fx-highlight-fill: rgba(255,255,255,0.25);
+    -fx-highlight-text-fill: white;
+}
+
+.login-password:focused {
+    -fx-border-color: rgba(255,255,255,0.45);
+}
+
 .register-password {
 
     -fx-background-color: rgba(50,50,50,0.72);

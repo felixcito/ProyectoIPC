@@ -32,20 +32,20 @@ import javafx.stage.Stage;
 public class LoginVisitaController implements Initializable {
 
     @FXML
-    private GridPane grid;
-    @FXML
     private VBox fondo_login;
     @FXML
-    private ImageView person_icon;
-    @FXML
-    private ImageView lock_icon;
+    private GridPane grid;
     @FXML
     private TextField campoNickname;
     @FXML
-    private TextField campoPassword;
+    private ImageView person_icon;
+    @FXML
+    private PasswordField campoPassword;
+    @FXML
+    private ImageView lock_icon;
     @FXML
     private Button login;
-
+    
     
     /**
      * Initializes the controller class.
