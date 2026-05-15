@@ -4,6 +4,7 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -28,7 +29,14 @@
                <items>
                   <VBox>
                      <children>
-                        <ListView fx:id="map_listview" onMouseClicked="#listClicked" prefHeight="399.0" prefWidth="87.0" />
+                        <ListView fx:id="map_listview" onMouseClicked="#listClicked" prefHeight="399.0" prefWidth="87.0">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" text="Eliminar Actividad" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></ListView>
                         <Label fx:id="labelDistancia" text="Distancia:" />
                         <Label fx:id="labelDuracion" text="Duración:" />
                         <Label fx:id="labelDesnivel" text="Desnivel:" />
@@ -39,10 +47,10 @@
                         <Label fx:id="labelAltitudMaxima" text="altitud máxima" />
                         <LineChart fx:id="chartDesnivel">
                             <xAxis>
-                              <NumberAxis fx:id="xAxis" side="BOTTOM" label="Distancia (km)"/>
+                              <NumberAxis label="Distancia (km)" side="BOTTOM" fx:id="xAxis" />
                             </xAxis>
                             <yAxis>
-                              <NumberAxis fx:id="yAxis" side="LEFT" label="Altitud (m)"/>
+                              <NumberAxis fx:id="yAxis" label="Altitud (m)" side="LEFT" />
                             </yAxis>
                           </LineChart>
                      </children>
@@ -80,8 +88,8 @@
             <Button mnemonicParsing="false" onAction="#cambiarMapa" text="Cambiar mapa" />
             <Button mnemonicParsing="false" onAction="#importarGPX" text="Importar GPX" />
             <Button mnemonicParsing="false" onAction="#verHistorial" text="Historial" />
-            <Button mnemonicParsing="false" onAction="#cerrarSesion" text="Cerrar Sesion" />
             <Button mnemonicParsing="false" onAction="#mostrarTotales" text="Ver totales" />
+            <Button mnemonicParsing="false" onAction="#cerrarSesion" text="Cerrar Sesion" />
             <Region HBox.hgrow="ALWAYS" />
             <Label text="Zoom" />
             <Button mnemonicParsing="false" onAction="#zoomOut" text="-" />

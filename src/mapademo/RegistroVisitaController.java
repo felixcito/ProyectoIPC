@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
@@ -61,6 +62,8 @@ public class RegistroVisitaController implements Initializable {
 
     // Variable extra para guardar la ruta de la imagen si el usuario elige una
     private String avatarPath = null;
+    @FXML
+    private Button register;
     /**
      * Initializes the controller class.
      */

@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.GaussianBlur;
@@ -34,14 +35,15 @@ public class LoginVisitaController implements Initializable {
     private GridPane grid;
     @FXML
     private VBox fondo_login;
-    @FXML
-    private TextField Nickname;
     private Rectangle rectBlur;
 
     @FXML
     private TextField campoNickname; // fx:id "campoNickname"
-    @FXML
     private PasswordField campoPassoword; // fx:id "campoPassoword"
+    @FXML
+    private TextField campoPassword;
+    @FXML
+    private Button login;
     
     /**
      * Initializes the controller class.

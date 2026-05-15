@@ -876,7 +876,6 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
     }
-    @FXML
     private void abrirVentanaAnadirMapa(ActionEvent event) {
         // 1. Creamos el diálogo
         Dialog<MapRegion> dialog = new Dialog<>();
@@ -947,5 +946,47 @@ public class FXMLDocumentController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+    
+    private void borrarActividad(ActionEvent event) {
+        // 1. Obtener la actividad seleccionada en la lista
+        Activity seleccionada = map_listview.getSelectionModel().getSelectedItem();
+
+        if (seleccionada != null) {
+            // 2. Crear una alerta de confirmación
+            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmacion.setTitle("Confirmar borrado");
+            confirmacion.setHeaderText("¿Estás seguro de que quieres borrar esta actividad?");
+            confirmacion.setContentText("Esta acción no se puede deshacer.");
+
+            Optional<ButtonType> resultado = confirmacion.showAndWait();
+
+            // 3. Si el usuario pulsa 'Aceptar'
+            if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+                // Borramos de la base de datos a través de la librería 
+                SportActivityApp.getInstance().removeActivity(seleccionada);
+
+                // Borramos de la lista visual (UI)
+                map_listview.getItems().remove(seleccionada);
+
+                // 4. LIMPIEZA: Si la actividad borrada es la que se está viendo ahora, limpiamos el mapa
+                if (actividadActual != null && actividadActual.getId() == seleccionada.getId()) {
+                    mapPane.getChildren().clear(); // Quita la ruta y anotaciones
+                    buildMap(new File("maps/upv.jpg")); // Recarga el mapa base vacío
+
+                    // Opcional: Limpiar las etiquetas de estadísticas
+                    labelDistancia.setText("Distancia: -");
+                    labelDuracion.setText("Duración: -");
+                    // ... repite con el resto de labels si quieres
+                }
+
+                System.out.println("Actividad borrada correctamente.");
+            }
+        } else {
+            // Si el usuario hace clic derecho pero no hay nada seleccionado
+            Alert aviso = new Alert(Alert.AlertType.WARNING);
+            aviso.setContentText("Por favor, selecciona una actividad de la lista para borrarla.");
+            aviso.showAndWait();
+        }
     }
 }
