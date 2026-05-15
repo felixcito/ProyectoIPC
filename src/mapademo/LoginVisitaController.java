@@ -14,15 +14,19 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * FXML Controller class
@@ -111,9 +115,30 @@ public class LoginVisitaController implements Initializable {
     }
     
     private void mostrarError(String mensaje) {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
-        alert.setHeaderText(null);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+
+        alert.initStyle(StageStyle.TRANSPARENT);
+
+        alert.setGraphic(null);
+
+        alert.setHeaderText("Error de validación");
+
         alert.setContentText(mensaje);
+
+        DialogPane dialogPane = alert.getDialogPane();
+
+        dialogPane.getStylesheets().add(
+            getClass()
+                .getResource("/resources/estilos.css")
+                .toExternalForm()
+        );
+
+        dialogPane.getStyleClass().add("custom-alert");
+
+        Scene scene = dialogPane.getScene();
+
+        scene.setFill(Color.TRANSPARENT);
+
         alert.showAndWait();
     }
 }
