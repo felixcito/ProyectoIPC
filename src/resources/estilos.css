@@ -525,13 +525,18 @@ S17.642,20.762,13.558,20.762z";
 /* ---------- TABLE VIEW (Dark Theme para Historial) ---------- */
 
 .table-view {
-    -fx-background-color: transparent;
+    -fx-background-color: rgba(255, 255, 255, 0.05); /* Gris clarito translúcido */
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-radius: 10;
     -fx-padding: 0;
 }
 
 .table-view .column-header-background {
     -fx-background-color: rgba(50,50,50,0.85);
     -fx-background-radius: 10 10 0 0;
+    -fx-border-color: transparent transparent rgba(255, 255, 255, 0.15) transparent; 
+    -fx-border-width: 0 0 1 0;
 }
 
 .table-view .column-header, .table-view .filler {
@@ -575,6 +580,12 @@ S17.642,20.762,13.558,20.762z";
 .table-view .virtual-flow .scroll-bar .thumb {
     -fx-background-color: rgba(255,255,255,0.3);
     -fx-background-radius: 5;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: rgba(255, 255, 255, 0.6);
+    -fx-font-family: "Poppins";
+    -fx-font-size: 13px;
 }
 
 /* ---------- TEXT ---------- */
