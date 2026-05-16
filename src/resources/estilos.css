@@ -588,6 +588,42 @@ S17.642,20.762,13.558,20.762z";
     -fx-font-size: 13px;
 }
 
+/* ---------- BARCHART (Gráfica oscura corregida) ---------- */
+.chart {
+    -fx-padding: 10px;
+}
+.chart-content {
+    -fx-background-color: transparent;
+}
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+.chart-vertical-grid-lines, .chart-horizontal-grid-lines {
+    -fx-stroke: rgba(255, 255, 255, 0.1);
+}
+.chart-legend {
+    -fx-background-color: transparent;
+}
+.chart-legend-item {
+    -fx-text-fill: white;
+    -fx-font-family: "Poppins";
+}
+.axis {
+    -fx-tick-label-fill: rgba(255, 255, 255, 0.7);
+    -fx-font-family: "Poppins";
+}
+/* Estilo del ComboBox del filtro */
+.combo-box-popup .list-view {
+    -fx-background-color: rgba(35,35,35,0.96);
+    -fx-text-fill: white;
+}
+.combo-box-popup .list-cell {
+    -fx-text-fill: white;
+}
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #5a2ccf;
+}
+
 /* ---------- TEXT ---------- */
 
 .register-text {
