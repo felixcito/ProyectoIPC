@@ -192,7 +192,7 @@
                   </Text>
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="11">
                      <children>
-                        <CheckBox mnemonicParsing="false" styleClass="login-checkbox" text="I accept" />
+                        <CheckBox fx:id="checkTerminos" mnemonicParsing="false" styleClass="login-checkbox" text="I accept" />
                         <Hyperlink fx:id="hyperlinkTerminos" onAction="#showTerms" styleClass="hyprland" text="terms and conditions" textFill="WHITE">
                            <font>
                               <Font name="Poppins Bold" size="12.0" />
@@ -206,6 +206,15 @@
                         </Hyperlink>
                      </children>
                   </HBox>
+                  <Button mnemonicParsing="false" onAction="#irLogin" styleClass="back-button" GridPane.halignment="LEFT" GridPane.rowIndex="13" GridPane.valignment="CENTER">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/flecha.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                </children>
             </GridPane>
          </children>

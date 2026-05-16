@@ -5,14 +5,21 @@
 package mapademo;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -23,8 +30,11 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 /**
@@ -64,6 +74,8 @@ public class RegistroVisitaController implements Initializable {
     private String avatarPath = null;
     @FXML
     private Button register;
+    @FXML
+    private CheckBox checkTerminos;
     /**
      * Initializes the controller class.
      */
@@ -174,6 +186,12 @@ public class RegistroVisitaController implements Initializable {
             mostrarError("Por favor, selecciona tu fecha de nacimiento.");
             return;
         }
+        
+        if (!checkTerminos.isSelected()) {
+            mostrarError("Debes aceptar los términos y condiciones.");
+            return;
+        }
+        
         java.time.LocalDate fecha = campoFecha.getValue();
 
         // 2. Validar los datos usando los métodos estáticos de la clase User
@@ -221,8 +239,44 @@ public class RegistroVisitaController implements Initializable {
     // Método auxiliar para no repetir código creando alertas de error
     private void mostrarError(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+
+        alert.initStyle(StageStyle.TRANSPARENT);
+
+        alert.setGraphic(null);
+
         alert.setHeaderText("Error de validación");
+
         alert.setContentText(mensaje);
+
+        DialogPane dialogPane = alert.getDialogPane();
+
+        dialogPane.getStylesheets().add(
+            getClass()
+                .getResource("/resources/estilos.css")
+                .toExternalForm()
+        );
+
+        dialogPane.getStyleClass().add("custom-alert");
+
+        Scene scene = dialogPane.getScene();
+
+        scene.setFill(Color.TRANSPARENT);
+
         alert.showAndWait();
+    }
+
+    @FXML
+    private void irLogin(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(
+            getClass().getResource("LoginVisita.fxml")
+        );
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+
+        stage.setScene(new Scene(root));
+
+        stage.show();
     }
 }
