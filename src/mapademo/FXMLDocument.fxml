@@ -152,8 +152,8 @@
                            </VBox.margin>
                         </Button>
                         <Button fx:id="register" mnemonicParsing="false" onAction="#realizarRegistro" text="Register" />
-                        <Button fx:id="editProfile" mnemonicParsing="false" onAction="#editar" text="Edit profile" />
-                        <Button fx:id="logOut" mnemonicParsing="false" onAction="#salirSesion" text="Log out" />
+                        <Button mnemonicParsing="false" text="Edit profile" />
+                        <Button fx:id="logOut" mnemonicParsing="false" onAction="#realizarLogout" text="Log out" />
                      </children>
                      <GridPane.margin>
                         <Insets top="20.0" />
