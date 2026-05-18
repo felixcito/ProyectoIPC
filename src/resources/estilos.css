@@ -720,3 +720,132 @@ S17.642,20.762,13.558,20.762z";
 
     -fx-padding: 10;
 }
+
+/* =========================================================
+   ESTILOS PARA LA PANTALLA PRINCIPAL (MAIN VIEW)
+   ========================================================= */
+
+/* Fondo general de la aplicación */
+.main-bg {
+    -fx-background-color: #121418; /* Gris muy oscuro, casi negro */
+}
+
+/* Paneles laterales redondeados (Actividades y Perfil) */
+.panel-dark {
+    -fx-background-color: #1a1d24; /* Un poco más claro que el fondo */
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(255,255,255,0.05);
+    -fx-padding: 20;
+}
+
+/* Títulos de sección (ACTIVIDADES, ESTADÍSTICAS...) */
+.section-title {
+    -fx-text-fill: white;
+    -fx-font-family: "Poppins";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* Etiquetas de estadísticas */
+.stat-label {
+    -fx-text-fill: #a0aab2;
+    -fx-font-family: "Poppins";
+    -fx-font-size: 13px;
+}
+
+/* Botones Superiores (Top Bar) */
+.top-btn {
+    -fx-background-color: #1a1d24;
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255,255,255,0.1);
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 6 12 6 12;
+}
+.top-btn:hover {
+    -fx-background-color: #2a2d34;
+}
+
+/* Botón Principal Naranja (Iniciar sesión) */
+.btn-orange {
+    -fx-background-color: linear-gradient(to right, #ff7b00, #e65c00);
+    -fx-text-fill: white;
+    -fx-font-family: "Poppins";
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 10;
+}
+.btn-orange:hover {
+    -fx-background-color: linear-gradient(to right, #ff8c1a, #ff6600);
+}
+
+/* Botón Secundario Oscuro (Registrarse, Modificar perfil) */
+.btn-dark {
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-text-fill: white;
+    -fx-font-family: "Poppins";
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 10;
+}
+.btn-dark:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+/* Botón Outline (Cerrar sesión) */
+.btn-outline-orange {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ff7b00;
+    -fx-font-family: "Poppins";
+    -fx-border-color: #ff7b00;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 10;
+}
+.btn-outline-orange:hover {
+    -fx-background-color: rgba(255,123,0,0.1);
+}
+
+/* --- ESTILOS PARA LA LISTA DE ACTIVIDADES --- */
+.list-view {
+    -fx-background-color: transparent;
+}
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 10;
+    -fx-font-family: "Poppins";
+}
+.list-view .list-cell:filled:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 8;
+}
+.list-view .list-cell:filled:selected {
+    -fx-background-color: rgba(255, 123, 0, 0.1);
+    -fx-border-color: #ff7b00;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #ff7b00;
+}
+
+/* --- SCROLLPANE DEL MAPA OSCURO --- */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* --- GRÁFICA DE DESNIVEL EN NARANJA --- */
+.chart-series-line {
+    -fx-stroke: #ff7b00;
+    -fx-stroke-width: 2px;
+}
+.default-color0.chart-line-symbol {
+    -fx-background-color: #ff7b00, white;
+}

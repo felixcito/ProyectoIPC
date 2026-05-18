@@ -84,6 +84,7 @@ import upv.ipc.sportlib.MapRegion;
 import upv.ipc.sportlib.SportActivityApp;
 import upv.ipc.sportlib.TrackPoint;
 
+
 /**
  * Controlador principal de la aplicación de gestión de actividades deportivas.
  *
@@ -175,8 +176,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label mousePosition;
     @FXML
-    private SplitPane splitPane;
-    @FXML
     private Label labelDistancia;
     @FXML
     private Label labelDuracion;
@@ -193,16 +192,12 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label labelDesnivelNegativo;
     @FXML
-    private NumberAxis yAxis;
-    @FXML
-    private NumberAxis xAxis;
-    @FXML
     private Button register;
     @FXML
     private Button login;
     @FXML
     private Button logOut;
- 
+
 
     // =========================================================
     //  MANEJADORES DE ZOOM
@@ -740,7 +735,6 @@ public class FXMLDocumentController implements Initializable {
     //  Cerrar sesion
     // =========================================================
     
-    @FXML
     private void cerrarSesion(ActionEvent event) {
         try {
             // 1. Guardar y cerrar sesión en la librería del proyecto
@@ -954,10 +948,11 @@ public class FXMLDocumentController implements Initializable {
         alert.showAndWait();
     }
     
+    @FXML
     private void borrarActividad(ActionEvent event) {
         // 1. Obtener la actividad seleccionada en la lista
         Activity seleccionada = map_listview.getSelectionModel().getSelectedItem();
-
+        
         if (seleccionada != null) {
             // 2. Crear una alerta de confirmación
             Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
