@@ -22,6 +22,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.chart.AreaChart?>
 
 <BorderPane prefHeight="800.0" prefWidth="1280.0" styleClass="main-bg" stylesheets="@../resources/estilos.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mapademo.FXMLDocumentController">
    
@@ -105,14 +106,15 @@
                </children>
             </GridPane>
 
-            <LineChart fx:id="chartDesnivel" legendVisible="false" prefHeight="180.0" createSymbols="false">
-              <xAxis>
-                <NumberAxis fx:id="xAxis" label="Distancia (km)" side="BOTTOM" />
-              </xAxis>
-              <yAxis>
-                <NumberAxis fx:id="yAxis" label="Altitud (m)" side="LEFT" />
-              </yAxis>
-            </LineChart>
+           <AreaChart fx:id="chartDesnivel" legendVisible="false" prefHeight="180.0" createSymbols="true">
+   <xAxis>
+      <NumberAxis fx:id="xAxis" label="Distancia (km)" side="BOTTOM" />
+   </xAxis>
+   <yAxis>
+      <NumberAxis fx:id="yAxis" label="Altitud (m)" side="LEFT" />
+   </yAxis>
+</AreaChart>
+          
          </children>
       </VBox>
    </left>

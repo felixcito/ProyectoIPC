@@ -43,7 +43,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.LineChart;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
@@ -84,6 +84,7 @@ import upv.ipc.sportlib.MapRegion;
 import upv.ipc.sportlib.SportActivityApp;
 import upv.ipc.sportlib.TrackPoint;
 import upv.ipc.sportlib.User;
+
 
 
 
@@ -151,7 +152,7 @@ public class FXMLDocumentController implements Initializable {
     
     /** Grafica de la altitud y distancia de la actividad */
     @FXML
-    private LineChart<Number, Number> chartDesnivel;
+    private AreaChart<Number, Number> chartDesnivel;
 
     /**
      * Slider de zoom.
@@ -935,16 +936,20 @@ public class FXMLDocumentController implements Initializable {
 
             for (int i = 0; i < series.getData().size(); i++) {
                 XYChart.Data<Number, Number> data = series.getData().get(i);
-                final TrackPoint tpAsociado = puntos.get(i); // Guardamos qué punto del GPS es
+                final TrackPoint tpAsociado = puntos.get(i); 
 
                 javafx.scene.Node node = data.getNode();
                 if (node != null) {
-                    // Hacemos el punto transparente para que se vea como una línea limpia
+                    // Estado inicial: invisible
                     node.setStyle("-fx-background-color: transparent, transparent;");
 
                     // Cuando el ratón ENTRA al punto de la gráfica
                     node.setOnMouseEntered(e -> {
-                        Point2D px = proj.project(tpAsociado); // Calculamos su posición en el mapa
+                        // 1. Hacemos visible el punto en la gráfica (blanco con borde naranja)
+                        node.setStyle("-fx-background-color: white, #ff7b00; -fx-background-radius: 5px;");
+                        
+                        // 2. Lógica del mapa (lo que ya tenías)
+                        Point2D px = proj.project(tpAsociado); 
                         punteroMapa.setCenterX(px.getX());
                         punteroMapa.setCenterY(px.getY());
                         if (!mapPane.getChildren().contains(punteroMapa)) {
@@ -954,6 +959,10 @@ public class FXMLDocumentController implements Initializable {
 
                     // Cuando el ratón SALE del punto de la gráfica
                     node.setOnMouseExited(e -> {
+                        // 1. Ocultamos el punto de la gráfica
+                        node.setStyle("-fx-background-color: transparent, transparent;");
+                        
+                        // 2. Ocultamos el punto del mapa
                         mapPane.getChildren().remove(punteroMapa);
                     });
                 }

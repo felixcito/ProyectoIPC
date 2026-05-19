@@ -849,3 +849,8 @@ S17.642,20.762,13.558,20.762z";
 .default-color0.chart-line-symbol {
     -fx-background-color: #ff7b00, white;
 }
+
+/* Relleno degradado debajo de la línea */
+.chart-series-area-fill {
+    -fx-fill: linear-gradient(to bottom, #ff7b0066, #ff7b0000);
+}
