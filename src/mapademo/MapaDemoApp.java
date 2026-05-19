@@ -29,12 +29,16 @@ public class MapaDemoApp extends Application {
         // --------------------------------------------
 
         // Cambiamos el archivo que se carga al arrancar
+
         
 
         //Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         //Ahora cargamos la pagina login primero
         Parent root = FXMLLoader.load(getClass().getResource("FXMLdocument.fxml"));
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/resources/logo.png")));
+
+       
+
 
         Scene scene = new Scene(root);
         //stage.setTitle("Demo mapas - IPC");

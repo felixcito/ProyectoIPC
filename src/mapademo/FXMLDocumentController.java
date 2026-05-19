@@ -84,6 +84,7 @@ import upv.ipc.sportlib.MapRegion;
 import upv.ipc.sportlib.SportActivityApp;
 import upv.ipc.sportlib.TrackPoint;
 
+
 /**
  * Controlador principal de la aplicación de gestión de actividades deportivas.
  *
@@ -175,8 +176,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label mousePosition;
     @FXML
-    private SplitPane splitPane;
-    @FXML
     private Label labelDistancia;
     @FXML
     private Label labelDuracion;
@@ -193,10 +192,12 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label labelDesnivelNegativo;
     @FXML
-    private NumberAxis yAxis;
+    private Button register;
     @FXML
-    private NumberAxis xAxis;
- 
+    private Button login;
+    @FXML
+    private Button logOut;
+
 
     // =========================================================
     //  MANEJADORES DE ZOOM
@@ -734,7 +735,6 @@ public class FXMLDocumentController implements Initializable {
     //  Cerrar sesion
     // =========================================================
     
-    @FXML
     private void cerrarSesion(ActionEvent event) {
         try {
             // 1. Guardar y cerrar sesión en la librería del proyecto
@@ -948,10 +948,11 @@ public class FXMLDocumentController implements Initializable {
         alert.showAndWait();
     }
     
+    @FXML
     private void borrarActividad(ActionEvent event) {
         // 1. Obtener la actividad seleccionada en la lista
         Activity seleccionada = map_listview.getSelectionModel().getSelectedItem();
-
+        
         if (seleccionada != null) {
             // 2. Crear una alerta de confirmación
             Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
@@ -987,6 +988,80 @@ public class FXMLDocumentController implements Initializable {
             Alert aviso = new Alert(Alert.AlertType.WARNING);
             aviso.setContentText("Por favor, selecciona una actividad de la lista para borrarla.");
             aviso.showAndWait();
+        }
+    }
+    /**
+     * onAction del botón 'logOut' (Id: logOut)
+     * 
+     */
+    @FXML
+    private void realizarLogout(ActionEvent event) {
+        try {
+            // Intentamos cerrar sesión usando la instancia de tu aplicación
+            // Si te da error en esta línea, asegúrate de que el jar de la librería esté en las Libraries del proyecto
+            upv.ipc.sportlib.SportActivityApp.getInstance().logout();
+            System.out.println("Sesión guardada en la base de datos.");
+
+            // Volver a la vista de login
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginVisita.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Running la Safor - Login");
+            stage.show();
+
+        } catch (Exception e) {
+            System.err.println("Error al cerrar sesión: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Se ejecuta al pulsar el botón "Register" del menú derecho.
+     * Abre la ventana o vista destinada al registro de nuevos usuarios.
+     */
+    @FXML
+    private void realizarRegistro(ActionEvent event) {
+        try {
+            // Nota: Asegúrate de que el nombre coincide exactamente con tu archivo de registro (ej: Registro.fxml)
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("RegistroVisita.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Running la Safor - Register");
+            stage.show();
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar la vista de Registro: " + e.getMessage());
+            e.printStackTrace();
+            mostrarError("No se pudo abrir la ventana de registro.");
+        }
+    }
+    /**
+     * onAction del botón 'login' (Id: login)
+     */
+    @FXML
+    private void realizarLogin(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginVisita.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Running la Safor - Login");
+            stage.show();
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar la vista de Login: " + e.getMessage());
+            e.printStackTrace();
+            mostrarError("No se pudo abrir la ventana de inicio de sesión.");
         }
     }
 }
