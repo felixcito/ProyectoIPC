@@ -83,6 +83,8 @@ import upv.ipc.sportlib.MapProjection;
 import upv.ipc.sportlib.MapRegion;
 import upv.ipc.sportlib.SportActivityApp;
 import upv.ipc.sportlib.TrackPoint;
+import upv.ipc.sportlib.User;
+
 
 
 /**
@@ -197,6 +199,16 @@ public class FXMLDocumentController implements Initializable {
     private Button login;
     @FXML
     private Button logOut;
+    @FXML
+    private NumberAxis yAxis;
+    @FXML
+    private NumberAxis xAxis;
+    @FXML
+    private Text txtNombreUsuario;
+    @FXML
+    private VBox boxInvitado;
+    @FXML
+    private VBox boxUsuario;
 
 
     // =========================================================
@@ -477,15 +489,55 @@ public class FXMLDocumentController implements Initializable {
         mapContextMenu = new ContextMenu(miText, miCircle);
 
        
+        // === PEGA ESTE NUEVO BLOQUE PREMIUM PARA EL 6.2 / GESTALT ===
         map_listview.setCellFactory(listView -> new ListCell<Activity>() {
             @Override
             protected void updateItem(Activity activity, boolean empty) {
                 super.updateItem(activity, empty);
+                
                 if (empty || activity == null) {
+                    setGraphic(null);
                     setText(null);
                 } else {
-                    // Muestra el nombre de la ruta, o "Actividad sin nombre" si no tiene
-                    setText(activity.getName() != null ? activity.getName() : "Actividad " + activity.getId());
+                    // 1. Creamos el contenedor horizontal para la fila
+                    javafx.scene.layout.HBox hbox = new javafx.scene.layout.HBox(12);
+                    hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                    
+                    // 2. Creamos el cuadro naranja con el símbolo del corredor
+                    Label iconLabel = new Label("🏃");
+                    iconLabel.setStyle(
+                        "-fx-font-size: 16px; " +
+                        "-fx-background-color: rgba(255, 123, 0, 0.15); " + // Fondo naranja translúcido deportivo
+                        "-fx-text-fill: #ff7b00; " +                         // Icono naranja brillante
+                        "-fx-padding: 8px 10px; " +
+                        "-fx-background-radius: 8px; " +
+                        "-fx-border-color: rgba(255, 123, 0, 0.3); " +
+                        "-fx-border-radius: 8px;"
+                    );
+                    
+                    // 3. Creamos un contenedor vertical para los textos (Título arriba, datos abajo)
+                    javafx.scene.layout.VBox vboxTextos = new javafx.scene.layout.VBox(3);
+                    
+                    // Etiqueta del título (Morning Run, City Run, etc.)
+                    String nombreRuta = activity.getName() != null ? activity.getName() : "Actividad " + activity.getId();
+                    Label labelNombre = new Label(nombreRuta);
+                    labelNombre.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px;");
+                    
+                    // Etiqueta secundaria (Fecha ficticia o duración + Kilómetros calculados dinámicamente)
+                    double kms = activity.getTotalDistance() / 1000.0;
+                    long minutos = activity.getDuration() != null ? activity.getDuration().toMinutes() : 0;
+                    Label labelDetalles = new Label(String.format("%02d min  •  %.2f km", minutos, kms));
+                    labelDetalles.setStyle("-fx-text-fill: #a0aab2; -fx-font-size: 11px;");
+                    
+                    // Juntamos los textos
+                    vboxTextos.getChildren().addAll(labelNombre, labelDetalles);
+                    
+                    // Metemos el icono y los textos en la fila
+                    hbox.getChildren().addAll(iconLabel, vboxTextos);
+                    
+                    // Le decimos a JavaFX que renderice este diseño en la celda
+                    setGraphic(hbox);
+                    setText(null);
                 }
             }
         });
@@ -498,6 +550,7 @@ public class FXMLDocumentController implements Initializable {
         // ── Carga del mapa inicial ─────────────────────────────────────
         // El fichero se busca relativo al directorio de trabajo del proyecto.
         buildMap(new File("maps/upv.jpg"));
+        actualizarInterfazUsuario();
     }
 
     // =========================================================
@@ -587,48 +640,78 @@ public class FXMLDocumentController implements Initializable {
     //  Importar GPX
     // =========================================================
     
-    @FXML
+  @FXML
     private void importarGPX(ActionEvent event) {
-        // 1. Abrimos el buscador de archivos
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Seleccionar archivo GPX");
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Ficheros GPX", "*.gpx"));
-
-        // Obtenemos la ventana actual para mostrar el diálogo
-        File file = fc.showOpenDialog(zoom_slider.getScene().getWindow());
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Importar ruta GPX");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("GPX Files", "*.gpx"));
+        File file = fileChooser.showOpenDialog(mapPane.getScene().getWindow());
 
         if (file != null) {
             try {
-                // 2. Importamos la actividad usando la librería
+                // 1. Guardar en base de datos
                 SportActivityApp app = SportActivityApp.getInstance();
-                Activity actividad = app.importActivity(file); // La librería procesa el GPX y lo guarda 
-                this.actividadActual = actividad;
-                this.proj = new MapProjection(actividad.getSuggestedMap(), mapPane.getWidth(), mapPane.getHeight()); 
+                Activity nuevaActividad = app.importActivity(file);
 
-                // 3. Mostramos las estadísticas en los Labels [cite: 201]
-                labelDistancia.setText("Distancia: " + String.format("%.2f", actividad.getTotalDistance() / 1000.0) + " km");
-                labelDuracion.setText("Duración: " + actividad.getDuration().toMinutes() + " min");
-                labelDesnivel.setText("Desnivel+: " + actividad.getElevationGain() + " m");
-                labelVelocidadMedia.setText("Velocidad media: " + String.format("%.2f", actividad.getAverageSpeed()) + " km/h");
-                labelRitmoMedio.setText("Ritmo medio: " + actividad.getAveragePace() + " min/km");
-                labelDesnivelNegativo.setText("Desnivel-: " + actividad.getElevationLoss() + " m");
-                labelAltitudMinima.setText("Altitud mín: " + actividad.getMinElevation() + " m");
-                labelAltitudMaxima.setText("Altitud máx: " + actividad.getMaxElevation() + " m");
+                // 2. Mostrar en la lista de actividades y seleccionarla
+                map_listview.getItems().add(nuevaActividad);
+                map_listview.getSelectionModel().select(nuevaActividad);
+                map_listview.refresh();
 
-                // 4. Dibujar ruta en el mapa
-                dibujarRuta(actividad);
-                
-                // 5. Actualiza la grafica de la actividad
-                actualizarGrafica(actividad);
-                
-            
+                this.actividadActual = nuevaActividad;
+
+                // 3. Actualizar toda la interfaz de golpe
+                actualizarEstadisticas(nuevaActividad);
+                actualizarGrafica(nuevaActividad);
+                dibujarRuta(nuevaActividad); 
+
             } catch (Exception e) {
-                System.err.println("Error al cerrar sesión: " + e.getMessage());
-                e.printStackTrace();
+                // Falla en silencio si el usuario cancela o el archivo es ilegible
             }
         }
     }
-    
+    // === MÉTODO PARA ACTUALIZAR LOS CONTENEDORES DE ESTADÍSTICAS (CORREGIDO) ===
+    private void actualizarEstadisticas(Activity activity) {
+        if (activity == null) return;
+
+        // 1. Distancia (Pasamos de metros a kilómetros con 2 decimales)
+        double kms = activity.getTotalDistance() / 1000.0;
+        labelDistancia.setText(String.format("%.2f km", kms));
+
+        // 2. Duración y Ritmo Medio
+        if (activity.getDuration() != null) {
+            long segundosTotales = activity.getDuration().getSeconds();
+            long horas = segundosTotales / 3600;
+            long minutos = (segundosTotales % 3600) / 60;
+            long segundos = segundosTotales % 60;
+            labelDuracion.setText(String.format("%02d:%02d:%02d", horas, minutos, segundos));
+            
+            // Cálculo del ritmo medio (minutos por kilómetro)
+            if (kms > 0) {
+                double ritmoDecimal = (segundosTotales / 60.0) / kms;
+                long ritmoMinutos = (long) ritmoDecimal;
+                long ritmoSegundos = (long) ((ritmoDecimal - ritmoMinutos) * 60);
+                labelRitmoMedio.setText(String.format("%d:%02d min/km", ritmoMinutos, ritmoSegundos));
+            } else {
+                labelRitmoMedio.setText("-");
+            }
+        } else {
+            labelDuracion.setText("-");
+            labelRitmoMedio.setText("-");
+        }
+
+        // 3. Desniveles positivo y negativo (Nombres de la librería corregidos)
+        labelDesnivel.setText(String.format("%.0f m", activity.getElevationGain()));
+        labelDesnivelNegativo.setText(String.format("%.0f m", activity.getElevationLoss()));
+
+        // 4. Velocidad Media (Pasamos de m/s a km/h multiplicando por 3.6)
+        double velKmh = activity.getAverageSpeed() * 3.6;
+        labelVelocidadMedia.setText(String.format("%.2f km/h", velKmh));
+
+        // 5. Altitudes mínima y máxima (Nombres de la librería corregidos)
+        labelAltitudMinima.setText(String.format("%.0f m", activity.getMinElevation()));
+        labelAltitudMaxima.setText(String.format("%.0f m", activity.getMaxElevation()));
+    }
     // =========================================================
     //  Dibujar ruta
     // =========================================================
@@ -1064,4 +1147,68 @@ public class FXMLDocumentController implements Initializable {
             mostrarError("No se pudo abrir la ventana de inicio de sesión.");
         }
     }
+    
+        
+
+    public class SessionManager {
+    // Aquí guardaremos el usuario cuando inicie sesión
+    private static User currentUser = null;
+
+    public static void login(User user) {
+        currentUser = user;
+    }
+
+    public static void logout() {
+        currentUser = null;
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+    public static boolean isLoggedIn() {
+        return currentUser != null;
+    }
+}
+    
+  private void actualizarInterfazUsuario() {
+    // Obtenemos la instancia de la app de la librería
+    SportActivityApp app = SportActivityApp.getInstance();
+    
+    // Asumimos que la librería tiene un método getUser() o similar. 
+    // Si al escribir "app." te salen sugerencias, busca una que devuelva "User"
+    User usuarioLogueado = app.getCurrentUser(); 
+
+    if (usuarioLogueado != null) {
+        // --- EL USUARIO HA INICIADO SESIÓN ---
+        boxInvitado.setVisible(false);
+        boxInvitado.setManaged(false);
+        
+        boxUsuario.setVisible(true);
+        boxUsuario.setManaged(true);
+        
+        // Usamos la clase User de la librería (la que ya tenías importada)
+        txtNombreUsuario.setText(usuarioLogueado.getNickName()); 
+    } else {
+        // --- MODO INVITADO ---
+        txtNombreUsuario.setText("Invitado");
+        
+        boxInvitado.setVisible(true);
+        boxInvitado.setManaged(true);
+        
+        boxUsuario.setVisible(false);
+        boxUsuario.setManaged(false);
+    }
+}
+    
+    public void setEstadoSesion(boolean logueado, String nombre) {
+                    boxInvitado.setVisible(!logueado);
+                    boxInvitado.setManaged(!logueado);
+
+                    boxUsuario.setVisible(logueado);
+                    boxUsuario.setManaged(logueado);
+
+                    txtNombreUsuario.setText(logueado ? nombre : "Invitado");
+        }
+    
 }

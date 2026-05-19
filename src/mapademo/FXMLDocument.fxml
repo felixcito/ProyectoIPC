@@ -20,6 +20,8 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 
 <BorderPane prefHeight="800.0" prefWidth="1280.0" styleClass="main-bg" stylesheets="@../resources/estilos.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mapademo.FXMLDocumentController">
    
@@ -51,7 +53,7 @@
    </top>
 
    <left>
-      <VBox prefWidth="300.0" spacing="20.0" styleClass="panel-dark" BorderPane.alignment="CENTER">
+      <VBox prefWidth="320.0" spacing="20.0" styleClass="panel-dark" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="20.0" left="20.0" />
          </BorderPane.margin>
@@ -70,20 +72,40 @@
             <Label styleClass="section-title" text="ESTADÍSTICAS">
                <VBox.margin><Insets top="10.0" /></VBox.margin>
             </Label>
-            <VBox spacing="5.0">
+            
+            <GridPane hgap="10.0" vgap="8.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                  <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" />
+               </columnConstraints>
                <children>
-                  <Label fx:id="labelDistancia" styleClass="stat-label" text="Distancia: -" />
-                  <Label fx:id="labelDuracion" styleClass="stat-label" text="Duración: -" />
-                  <Label fx:id="labelDesnivel" styleClass="stat-label" text="Desnivel+: -" />
-                  <Label fx:id="labelVelocidadMedia" styleClass="stat-label" text="Velocidad media: -" />
-                  <Label fx:id="labelRitmoMedio" styleClass="stat-label" text="Ritmo medio: -" />
-                  <Label fx:id="labelDesnivelNegativo" styleClass="stat-label" text="Desnivel-: -" />
-                  <Label fx:id="labelAltitudMinima" styleClass="stat-label" text="Altitud mínima: -" />
-                  <Label fx:id="labelAltitudMaxima" styleClass="stat-label" text="Altitud máxima: -" />
+                  <Label styleClass="stat-label" text="Distancia:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                  <Label fx:id="labelDistancia" styleClass="stat-value" text="-" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                  
+                  <Label styleClass="stat-label" text="Duración:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <Label fx:id="labelDuracion" styleClass="stat-value" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  
+                  <Label styleClass="stat-label" text="Desnivel+:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                  <Label fx:id="labelDesnivel" styleClass="stat-value" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  
+                  <Label styleClass="stat-label" text="Velocidad media:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                  <Label fx:id="labelVelocidadMedia" styleClass="stat-value" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  
+                  <Label styleClass="stat-label" text="Ritmo medio:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                  <Label fx:id="labelRitmoMedio" styleClass="stat-value" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  
+                  <Label styleClass="stat-label" text="Desnivel-:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                  <Label fx:id="labelDesnivelNegativo" styleClass="stat-value" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  
+                  <Label styleClass="stat-label" text="Altitud mínima:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                  <Label fx:id="labelAltitudMinima" styleClass="stat-value" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  
+                  <Label styleClass="stat-label" text="Altitud máxima:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+                  <Label fx:id="labelAltitudMaxima" styleClass="stat-value" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                </children>
-            </VBox>
+            </GridPane>
 
-            <LineChart fx:id="chartDesnivel" legendVisible="false" prefHeight="180.0">
+            <LineChart fx:id="chartDesnivel" legendVisible="false" prefHeight="180.0" createSymbols="false">
               <xAxis>
                 <NumberAxis fx:id="xAxis" label="Distancia (km)" side="BOTTOM" />
               </xAxis>
@@ -137,30 +159,27 @@
             <Circle fill="#ffffff00" radius="50.0" stroke="#ff7b00" strokeType="INSIDE" strokeWidth="2.0">
                <VBox.margin><Insets top="20.0" /></VBox.margin>
             </Circle>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Invitado" textAlignment="CENTER">
+            <Text fx:id="txtNombreUsuario" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Invitado" textAlignment="CENTER">
                <font><Font name="System Bold" size="18.0" /></font>
             </Text>
-            <Text fill="#a0aab2" strokeType="OUTSIDE" strokeWidth="0.0" text="No has iniciado sesión" textAlignment="CENTER">
-               <VBox.margin><Insets bottom="20.0" /></VBox.margin>
-            </Text>
-
-            <Button fx:id="login" maxWidth="Infinity" mnemonicParsing="false" onAction="#realizarLogin" styleClass="btn-orange" text="👤   Iniciar sesión" />
-            <Button fx:id="register" maxWidth="Infinity" mnemonicParsing="false" onAction="#realizarRegistro" styleClass="btn-dark" text="📝   Registrarse" />
-            <Button maxWidth="Infinity" mnemonicParsing="false" styleClass="btn-dark" text="✏️   Modificar perfil" />
             
-            <Region VBox.vgrow="ALWAYS" /> 
-            
-            <VBox spacing="8.0" style="-fx-background-color: rgba(255,255,255,0.02); -fx-padding: 15; -fx-background-radius: 8;">
-               <children>
+            <VBox fx:id="boxInvitado" alignment="TOP_CENTER" spacing="15.0">
+               <Text fill="#a0aab2" text="No has iniciado sesión" textAlignment="CENTER" />
+               <Button fx:id="login" maxWidth="Infinity" onAction="#realizarLogin" styleClass="btn-orange" text="👤   Iniciar sesión" />
+               <Button fx:id="register" maxWidth="Infinity" onAction="#realizarRegistro" styleClass="btn-dark" text="📝   Registrarse" />
+               
+               <VBox spacing="8.0" style="-fx-background-color: rgba(255,255,255,0.02); -fx-padding: 15; -fx-background-radius: 8;">
                   <Label styleClass="section-title" text="Inicia sesión para acceder a:" textFill="#ff7b00" />
                   <Label text="✔️ Tus actividades y rutas" textFill="#a0aab2" />
                   <Label text="✔️ Historial y estadísticas" textFill="#a0aab2" />
                   <Label text="✔️ Sincronización en la nube" textFill="#a0aab2" />
-               </children>
-               <VBox.margin><Insets bottom="20.0" /></VBox.margin>
+               </VBox>
             </VBox>
 
-            <Button fx:id="logOut" maxWidth="Infinity" mnemonicParsing="false" onAction="#realizarLogout" styleClass="btn-outline-orange" text="🚪   Cerrar sesión" />
+            <VBox fx:id="boxUsuario" alignment="TOP_CENTER" spacing="15.0" visible="false" managed="false">
+               <Button maxWidth="Infinity" styleClass="btn-dark" text="✏️   Modificar perfil" />
+               <Button fx:id="logOut" maxWidth="Infinity" onAction="#realizarLogout" styleClass="btn-outline-orange" text="🚪   Cerrar sesión" />
+            </VBox>
          </children>
       </VBox>
    </right>
