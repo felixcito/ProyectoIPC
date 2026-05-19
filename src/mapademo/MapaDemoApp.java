@@ -22,19 +22,27 @@ public class MapaDemoApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
+
         // --- TRUCO PARA PRUEBAS: Login automático ---
         // Pon aquí un usuario y contraseña que sepas que ya existen en tu base de datos
         //upv.ipc.sportlib.SportActivityApp.getInstance().login("jgarcia", "passPER21!"); 
         // --------------------------------------------
 
         // Cambiamos el archivo que se carga al arrancar
-        Parent root = FXMLLoader.load(getClass().getResource("LoginVisita.fxml"));
+        
+
+        //Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+        //Ahora cargamos la pagina login primero
+        Parent root = FXMLLoader.load(getClass().getResource("FXMLdocument.fxml"));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/resources/logo.png")));
 
         Scene scene = new Scene(root);
+        //stage.setTitle("Demo mapas - IPC");
+        stage.setTitle("Running la Safor - Login"); 
         stage.setScene(scene);
-        stage.setTitle("Running la Safor - Mapa (Modo Pruebas)");
         stage.show();
-}
+    }
+
     //Este método se ejecuta automáticamente al cerrar la ventana
     @Override
     public void stop() throws Exception {
